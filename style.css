@@ -1,60 +1,70 @@
 body {
+    background: #5E009C;
+    font-family: Arial;
+    color: white;
+    text-align: center;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
-    background: #4B0076;
-    color: white;
-}
-
-.topo {
-    text-align: center;
-    padding: 25px 10px 10px;
-    background: #4B0076;
 }
 
 .logo {
-    width: 160px;
+    width: 180px;
+    margin-top: 10px;
 }
 
-.unidade {
-    margin-top: 5px;
-    font-size: 18px;
-    opacity: 0.85;
+.topo {
+    margin-top: 20px;
 }
 
-.principal {
-    background: #FFFFFF;
-    color: #4B0076;
-    margin: 20px;
-    border-radius: 20px;
-    padding: 40px 20px;
-    text-align: center;
-}
-
-.principal h1 {
-    font-size: 64px;
-}
-
-.principal h2 {
-    font-size: 40px;
+#unidade {
     margin-top: -10px;
-}
-
-.preco {
     font-size: 20px;
-    margin: 10px 0 30px;
+    font-weight: 300;
+    opacity: 0.8;
 }
 
-.btn {
-    width: 100%;
-    padding: 18px;
-    background: #4B0076;
-    border: none;
-    color: white;
-    font-size: 24px;
-    border-radius: 15px;
-    cursor: pointer;
+.peso h1 {
+    font-size: 60px;
+    margin-top: 50px;
+    font-weight: bold;
 }
-.btn:hover {
+
+.total h2 {
+    font-size: 40px;
+    margin-top: -5px;
+}
+
+.total p {
+    margin-top: -15px;
     opacity: 0.9;
 }
+
+.btn-cobrar {
+    width: 90%;
+    background: #FFD700;
+    color: #4B0082;
+    padding: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    margin-top: 40px;
+}
+
+.menu {
+    margin-top: 40px;
+}
+
+.menuBtn {
+    display: block;
+    margin: 10px auto;
+    color: white;
+    background: rgba(255,255,255,0.2);
+    padding: 12px;
+    width: 200px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+
