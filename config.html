@@ -1,61 +1,30 @@
-<!doctype html>
-<html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Configurações do PDV</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <style>
-    /* ajustes locais para a página de configurações */
-    .app{padding:40px 16px}
-    .form {max-width:900px;width:100%;margin:16px auto;background:rgba(255,255,255,0.04);padding:18px;border-radius:12px}
-    label{display:block;margin-bottom:8px;font-weight:600}
-    input[type="text"]{width:100%;padding:12px;border-radius:10px;border:0;background:rgba(255,255,255,0.06);color:var(--white);font-size:16px}
-    .btn-save{display:block;margin-top:14px;padding:14px;border-radius:12px;border:0;background:var(--accent);color:#333;font-weight:700;width:100%}
-    .back{display:block;text-align:center;margin-top:16px;color:var(--white);opacity:0.9}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Vendas</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <main class="app">
-    <h1 style="text-align:center;margin:8px 0 20px">Configurações do PDV</h1>
+    <main class="relatorio-container">
 
-    <div class="form">
-      <label for="precoInput">Preço por 100g (ex: 5.49)</label>
-      <input id="precoInput" type="text" inputmode="decimal" />
+        <h1>Relatório de Vendas</h1>
 
-      <label for="unidadeInput" style="margin-top:12px">Nome da Unidade</label>
-      <input id="unidadeInput" type="text"/>
+        <div id="listaRelatorio" class="lista-relatorio">
+            Nenhuma venda hoje.
+        </div>
 
-      <button id="btnSave" class="btn-save">Salvar</button>
+        <!-- BOTÃO EXPORTAR PDF (AGORA NO LUGAR CERTO) -->
+        <button id="btnExportPdf" class="btn-cobrar" style="margin-top:25px;">
+            Exportar PDF
+        </button>
 
-      <a href="index.html" class="back">Voltar</a>
-    </div>
-  </main>
+        <a href="index.html" class="menu-btn" style="margin-top:25px;">Voltar</a>
 
-  <script>
-    // carrega valores atuais
-    const precoEl = document.getElementById('precoInput');
-    const uniEl = document.getElementById('unidadeInput');
-    const currentPreco = localStorage.getItem('preco') || '5.49';
-    const currentUni = localStorage.getItem('unidade') || 'Unidade Ilha 9';
-    precoEl.value = currentPreco;
-    uniEl.value = currentUni;
+    </main>
 
-    document.getElementById('btnSave').addEventListener('click', () => {
-      // valida simples
-      let preco = parseFloat(precoEl.value.toString().replace(',', '.'));
-      if(isNaN(preco) || preco <= 0){
-        alert('Digite um preço válido (ex: 5.49).');
-        return;
-      }
-      let unidade = uniEl.value.trim() || 'Unidade Ilha 9';
-      localStorage.setItem('preco', preco.toFixed(2));
-      localStorage.setItem('unidade', unidade);
-      alert('Configurações salvas.');
-      // voltar para a tela principal
-      window.location.href = 'index.html';
-    });
-  </script>
+    <script src="relatorio.js" defer></script>
 </body>
 </html>
