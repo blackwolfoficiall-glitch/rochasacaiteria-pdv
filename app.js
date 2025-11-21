@@ -1,26 +1,33 @@
-// CONFIGURAÇÕES
-let precoPor100g = Number(localStorage.getItem("preco")) || 5.49;
-let unidadeNome = localStorage.getItem("unidade") || "Unidade Ilha 9";
+// ===== CONFIGURAÇÕES =====
+let precoPor100g = Number(localStorage.getItem("preco") || 5.49);
+let unidadeNome = localStorage.getItem("unidade") || "Ilha 9";
 
-// Atualiza textos da tela
+// Atualizar cabeçalho
 document.getElementById("unidade").innerText = unidadeNome;
-document.getElementById("precoInfo").innerText = "R$ " + precoPor100g.toFixed(2) + " / 100g";
 
-// Atualização do display
+// Atualiza texto do preço
+document.getElementById("precoInfo").innerText =
+    "R$ " + precoPor100g.toFixed(2) + " / 100g";
+
+
+// ===== FUNÇÃO PARA ATUALIZAR TELA =====
 function atualizarDisplay(pesoKg) {
-    let total = pesoKg * (precoPor100g * 10); // 100g = *10
+
+    let total = pesoKg * (precoPor100g * 10); // preço por kg
 
     document.getElementById("pesoDisplay").innerText = pesoKg.toFixed(3) + " kg";
     document.getElementById("totalDisplay").innerText = "R$ " + total.toFixed(2);
 }
 
-// Simulação da balança (depois troca pela real)
+
+// ===== SIMULAÇÃO DE PESAGEM =====
 setInterval(() => {
-    let pesoFake = Math.random() * 0.800;
+    let pesoFake = Math.random() * 0.800; // até 800g
     atualizarDisplay(pesoFake);
 }, 1500);
 
-// BOTÃO COBRAR
+
+// ===== BOTÃO COBRAR =====
 document.querySelector(".btn-cobrar").addEventListener("click", () => {
-    alert("Pagamento iniciado!");
+    alert("Iniciando pagamento… (integração depois!)");
 });
