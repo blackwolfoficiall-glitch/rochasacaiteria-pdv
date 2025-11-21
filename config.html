@@ -9,21 +9,19 @@
 
 <body>
 
-<h1 class="titulo">Configurações do PDV</h1>
+<h1>Configurações do PDV</h1>
 
 <div class="config-box">
-
     <label>Preço por 100g:</label>
-    <input id="inputPreco" type="text">
+    <input id="inputPreco" type="number" step="0.01" placeholder="5,49">
 
     <label>Unidade:</label>
-    <input id="inputUnidade" type="text">
+    <input id="inputUnidade" type="text" placeholder="Ilha 9">
 
-    <button id="btnSalvar" class="btn-salvar">Salvar</button>
-
-    <a href="index.html" class="voltar">Voltar</a>
-
+    <button id="btnSalvar">Salvar</button>
 </div>
+
+<a href="index.html" class="btn-voltar">Voltar</a>
 
 <script src="config.js"></script>
 </body>
