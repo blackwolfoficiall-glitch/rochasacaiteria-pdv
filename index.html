@@ -1,72 +1,60 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDV Rochas Açaí</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rochas Açaí — PDV</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#5A189A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 </head>
 
 <body>
+<div id="app">
+  <header>
+    <img src="logo.png" class="logo" alt="Rochas Açaí">
+    <h1>Rochas Açaí — PDV</h1>
+  </header>
 
-<header class="topo">
-    <img src="logo.png" class="logo">
-    <h2 id="unidade">Unidade Ilha 9</h2>
-</header>
+  <section class="panel">
+    <div class="label">Peso</div>
+    <div id="weight" class="big">0 g</div>
 
-<main>
+    <div class="label">Total</div>
+    <div id="total" class="big">R$ 0,00</div>
+  </section>
 
-    <section class="display" aria-live="polite">
-        <div class="peso-big">
-            <h1 id="pesoDisplay">0.000 kg</h1>
-        </div>
+  <section class="controls">
+    <button id="connectScale" class="btn primary">Conectar Balança</button>
 
-        <div class="valor">
-            <div class="total" id="totalDisplay">R$ 0,00</div>
-            <div class="preco-info" id="precoInfo">R$ 5,49 / 100g</div>
-        </div>
-    </section>
+    <div class="priceBox">
+      <label>Preço por 100g</label>
+      <input id="price100" type="number" value="5.00" step="0.01">
+    </div>
 
-    <button class="btn-cobrar" id="btnCobrar">COBRAR</button>
+    <button id="charge" class="btn gold">COBRAR</button>
+  </section>
 
-    <nav class="menu">
-        <a href="#" id="btnConfig" class="menu-btn">Configurações</a>
-        <a href="#" id="btnRelatorio" class="menu-btn">Relatório</a>
-    </nav>
+  <section id="paymentArea" class="paymentArea">
+    <div id="qrWrap"></div>
+  </section>
+</div>
 
-</main>
+<!-- Modal Escolha Forma de Pagamento -->
+<div id="payModal" class="modal hidden">
+  <div class="modal-box">
+    <h2>Escolha a forma de pagamento</h2>
+    <button class="opt debit" id="optDebit">Débito</button>
+    <button class="opt credit" id="optCredit">Crédito</button>
+    <button class="opt pix" id="optPix">PIX</button>
+    <button id="closeModal" class="close">Cancelar</button>
+  </div>
+</div>
 
-<script>
-// ===============================
-//   SISTEMA DE SENHAS
-// ===============================
-
-const senhaCorreta = "2024"; // <<< SENHA PADRÃO (pode mudar)
-
-// Proteção do botão CONFIGURAÇÕES
-document.getElementById("btnConfig").addEventListener("click", () => {
-    let senha = prompt("Digite a senha de acesso:");
-
-    if (senha === senhaCorreta) {
-        window.location.href = "config.html";
-    } else {
-        alert("Senha incorreta!");
-    }
-});
-
-// Proteção do botão RELATÓRIO
-document.getElementById("btnRelatorio").addEventListener("click", () => {
-    let senha = prompt("Digite a senha de acesso:");
-
-    if (senha === senhaCorreta) {
-        window.location.href = "relatorio.html";
-    } else {
-        alert("Senha incorreta!");
-    }
-});
-</script>
-
-<script src="app.js" defer></script>
-
+<script src="app.js"></script>
 </body>
 </html>
