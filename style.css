@@ -1,70 +1,89 @@
 body {
-    background: #5E009C;
-    font-family: Arial;
+    margin: 0;
+    background: #5e0a99;
+    font-family: Arial, sans-serif;
     color: white;
     text-align: center;
-    margin: 0;
-    padding: 0;
 }
 
 .logo {
-    width: 180px;
-    margin-top: 10px;
-}
-
-.topo {
+    width: 170px;
     margin-top: 20px;
 }
 
-#unidade {
-    margin-top: -10px;
-    font-size: 20px;
+.topo h2 {
+    margin-top: 5px;
     font-weight: 300;
-    opacity: 0.8;
 }
 
 .peso h1 {
     font-size: 60px;
-    margin-top: 50px;
-    font-weight: bold;
+    margin: 20px 0;
 }
 
 .total h2 {
-    font-size: 40px;
-    margin-top: -5px;
-}
-
-.total p {
-    margin-top: -15px;
-    opacity: 0.9;
+    font-size: 35px;
 }
 
 .btn-cobrar {
     width: 90%;
-    background: #FFD700;
-    color: #4B0082;
-    padding: 20px;
-    font-size: 28px;
+    height: 70px;
+    background: #ffcc00;
+    color: #4d008b;
+    font-size: 25px;
     font-weight: bold;
     border: none;
     border-radius: 12px;
-    margin-top: 40px;
+    margin: 25px auto;
 }
 
 .menu {
-    margin-top: 40px;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
 }
 
-.menuBtn {
-    display: block;
-    margin: 10px auto;
+.menu a {
+    background: #ffffff40;
+    padding: 12px 20px;
+    border-radius: 12px;
     color: white;
-    background: rgba(255,255,255,0.2);
-    padding: 12px;
-    width: 200px;
-    border-radius: 10px;
     text-decoration: none;
-    font-size: 16px;
 }
 
+/* Configurações */
 
+.card {
+    background: #ffffff20;
+    width: 85%;
+    padding: 20px;
+    margin: 25px auto;
+    border-radius: 12px;
+}
+
+input {
+    width: 90%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 15px;
+}
+
+.btn-salvar {
+    background: #ffcc00;
+    padding: 12px 20px;
+    border: none;
+    width: 90%;
+    border-radius: 12px;
+    color: #4d008b;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.voltar {
+    color: white;
+    text-decoration: none;
+    display: block;
+    margin-top: 25px;
+}
