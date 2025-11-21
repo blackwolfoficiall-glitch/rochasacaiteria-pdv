@@ -15,7 +15,12 @@
 </head>
 
 <body>
-<div id="app">
+  <script>
+if(localStorage.getItem("logado") !== "sim"){
+    window.location.href = "login.html";
+}
+</script>
+  <div id="app">
 
 <header>
   <img src="logo.png" class="logo" alt="Rochas Açaí">
