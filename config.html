@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurações</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>Configurações do PDV</h1>
+
+<label>Preço por 100g:</label>
+<input id="precoInput" type="number" step="0.01">
+
+<label>Nome da unidade:</label>
+<input id="unidadeInput" type="text">
+
+<button class="btn-cobrar" onclick="salvar()">Salvar</button>
+
+<script>
+function salvar(){
+    localStorage.setItem("preco100", document.getElementById("precoInput").value);
+    localStorage.setItem("unidade", document.getElementById("unidadeInput").value);
+    alert("Salvo!");
+}
+</script>
+
+</body>
+</html>
+
+
