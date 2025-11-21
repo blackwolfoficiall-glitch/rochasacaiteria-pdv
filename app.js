@@ -1,67 +1,163 @@
+/* ============================
+   ROCHAS AÇAÍ — PDV
+   app.js (versão corrigida)
+============================ */
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rochas Açaí — PDV</title>
+const weightEl = document.getElementById("weight");
+const totalEl = document.getElementById("total");
+const priceInput = document.getElementById("price100");
+const btnConnect = document.getElementById("connectScale");
+const btnCharge = document.getElementById("charge");
+const qrWrap = document.getElementById("qrWrap");
 
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+const payModal = document.getElementById("payModal");
+const optDebit = document.getElementById("optDebit");
+const optCredit = document.getElementById("optCredit");
+const optPix = document.getElementById("optPix");
+const closeModal = document.getElementById("closeModal");
 
-<meta name="theme-color" content="#5A189A">
-</head>
+let grams = 0;
+let port = null;
 
-<body>
-<div id="app">
+/* ============================
+   FORMATADOR
+============================ */
+function formatBRL(n){
+  return 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2});
+}
 
-<header>
-  <img src="logo.png" class="logo" alt="Rochas Açaí">
-  <h1>ROCHAS AÇAÍ — PDV</h1>
-</header>
+/* ============================
+   ATUALIZAR TELA
+============================ */
+function updateUI(){
+  weightEl.innerText = `${Math.round(grams)} g`;
+  const price = parseFloat(priceInput.value || 0);
+  const total = (grams / 100.0) * price;
+  totalEl.innerText = formatBRL(total || 0);
+}
 
-<!-- BOTÕES NO TOPO -->
-<nav class="top-buttons">
-    <a href="config.html" class="nav-btn">⚙ Configurações</a>
-    <a href="relatorio.html" class="nav-btn">📄 Relatório</a>
-</nav>
+/* Atualiza total quando muda o preço */
+priceInput.addEventListener("input", updateUI);
 
-<section class="panel">
-  <div class="label">Peso</div>
-  <div id="weight" class="big">0 g</div>
+/* ============================
+   WEBSERIAL – BALANÇA
+============================ */
+async function connectWebSerial(){
+  if(!("serial" in navigator)){
+    alert("Seu navegador não suporta WebSerial.");
+    return;
+  }
 
-  <div class="label">Total</div>
-  <div id="total" class="big">R$ 0,00</div>
-</section>
+  try{
+    port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 9600 });
 
-<section class="controls">
-  <button id="connectScale" class="btn primary">Conectar Balança</button>
+    // esconder botão ao conectar
+    btnConnect.style.display = "none";
 
-  <div class="priceBox">
-    <label>Preço por 100g</label>
-    <input id="price100" type="number" value="5.00" step="0.01">
-  </div>
+    const decoder = new TextDecoderStream();
+    port.readable.pipeTo(decoder.writable);
+    const reader = decoder.readable.getReader();
 
-  <button id="charge" class="btn gold">COBRAR</button>
-</section>
+    while(true){
+      const { value, done } = await reader.read();
+      if(done) break;
 
-<section id="paymentArea" class="paymentArea">
-  <div id="qrWrap"></div>
-</section>
+      const m = String(value).match(/-?\d+[\.,]?\d*/);
+      if(m){
+        let val = parseFloat(m[0].replace(",","."));
+        if(val >= 0 && val < 20000){
+          grams = val;
+          updateUI();
+        }
+      }
+    }
 
-<!-- MODAL PAGAMENTO -->
-<div id="payModal" class="modal hidden">
-  <div class="modal-box">
-    <h2>Escolha a forma de pagamento</h2>
-    <button class="opt debit" id="optDebit">Débito</button>
-    <button class="opt credit" id="optCredit">Crédito</button>
-    <button class="opt pix" id="optPix">PIX</button>
-    <button id="closeModal" class="close">Cancelar</button>
-  </div>
-</div>
+  }catch(err){
+    alert("Erro ao conectar: " + err);
+    btnConnect.style.display = "block";
+  }
+}
 
-</div>
+btnConnect.addEventListener("click", connectWebSerial);
 
-<script src="app.js"></script>
-</body>
-</html>
+/* ============================
+   BACKEND (Render)
+============================ */
+const BACKEND = "https://rochas-backend.onrender.com";
+
+/* ============================
+   PAGAMENTO
+============================ */
+async function createPayment(method){
+  const price = parseFloat(priceInput.value);
+  const total = ((grams / 100) * price).toFixed(2);
+
+  if(total <= 0){
+    alert("Valor inválido.");
+    return;
+  }
+
+  const resp = await fetch(`${BACKEND}/create_payment?method=${method}`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      amount: total,
+      description: "Açaí por peso — Rochas Açaí"
+    })
+  });
+
+  const data = await resp.json();
+
+  // PIX
+  if(data.point_of_interaction){
+    const url = data.point_of_interaction.transaction_data.ticket_url;
+    return showQr(url);
+  }
+
+  // Cartão
+  if(data.init_point){
+    return showQr(data.init_point);
+  }
+
+  alert("Erro no pagamento");
+}
+
+/* ============================
+   MOSTRAR QR CODE
+============================ */
+function showQr(url){
+  qrWrap.innerHTML = "";
+  const img = document.createElement("img");
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
+  qrWrap.appendChild(img);
+}
+
+/* ============================
+   MODAL DE PAGAMENTO
+============================ */
+btnCharge.addEventListener("click", ()=>{
+  payModal.classList.remove("hidden");
+});
+
+closeModal.addEventListener("click", ()=>{
+  payModal.classList.add("hidden");
+});
+
+optDebit.addEventListener("click", ()=>{
+  payModal.classList.add("hidden");
+  createPayment("debit");
+});
+
+optCredit.addEventListener("click", ()=>{
+  payModal.classList.add("hidden");
+  createPayment("credit");
+});
+
+optPix.addEventListener("click", ()=>{
+  payModal.classList.add("hidden");
+  createPayment("pix");
+});
+
+/* Inicial */
+window.addEventListener("load", updateUI);
