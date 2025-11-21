@@ -7,7 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+<script>
+if(localStorage.getItem("logado") !== "sim"){
+    window.location.href = "login.html";
+}
+</script>    
     <main class="container-relatorio">
 
         <h1>Relatório de Vendas</h1>
