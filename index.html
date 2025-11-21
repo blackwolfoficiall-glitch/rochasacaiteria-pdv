@@ -1,35 +1,42 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PDV Rochas Açaí</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PDV Rochas Açaí</title>
+
+  <!-- Fonte e ícones -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
 </head>
-
 <body>
+  <main class="app">
+    <header class="top">
+      <img src="logo.png" alt="Rochas Açaí" class="logo" />
+      <div id="unidade" class="unidade">Unidade</div>
+    </header>
 
-<div class="topo">
-    <img src="logo.png" class="logo">
-    <h2 id="unidade">Unidade Ilha 9</h2>
-</div>
+    <section class="display" aria-live="polite">
+      <div class="peso-big">
+        <h1 id="pesoDisplay">0.000 kg</h1>
+      </div>
 
-<div class="peso">
-    <h1 id="pesoDisplay">0.000 kg</h1>
-</div>
+      <div class="valor">
+        <div class="total" id="totalDisplay">R$ 0,00</div>
+        <div class="preco-info" id="precoInfo">R$ 0,00 / 100g</div>
+      </div>
+    </section>
 
-<div class="total">
-    <h2 id="totalDisplay">R$ 0,00</h2>
-    <p id="precoInfo">R$ 5.49 / 100g</p>
-</div>
+    <button class="btn-cobrar" id="btnCobrar">COBRAR</button>
 
-<button class="btn-cobrar">COBRAR</button>
+    <nav class="menu">
+      <a href="config.html" class="menu-btn">Configurações</a>
+      <a href="relatorio.html" class="menu-btn">Relatório</a>
+    </nav>
+  </main>
 
-<div class="menu">
-    <a href="config.html">Configurações</a>
-    <a href="relatorio.html">Relatório</a>
-</div>
-
-<script src="app.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
