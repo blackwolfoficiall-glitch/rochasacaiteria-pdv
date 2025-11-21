@@ -1,27 +1,31 @@
-// Carregar vendas do localStorage
-let vendas = JSON.parse(localStorage.getItem("vendas")) || [];
+// Carrega vendas
+let vendas = JSON.parse(localStorage.getItem("vendasDia")) || [];
 
-// Mostrar vendas na tela
-const lista = document.getElementById("listaRelatorio");
+const divLista = document.getElementById("listaVendas");
 
 if (vendas.length === 0) {
-    lista.innerHTML = "Nenhuma venda hoje.";
+    divLista.innerHTML = "Nenhuma venda hoje.";
 } else {
-    lista.innerHTML = vendas
-        .map(v => `<p>${v.horario} — ${v.peso} kg — R$ ${v.total}</p>`)
-        .join("");
+    divLista.innerHTML = vendas.map(v => `
+        <p>${v.hora} — ${v.peso}kg — R$ ${v.total}</p>
+    `).join("");
 }
 
-// EXPORTAR PDF
-document.getElementById("btnExportPdf").addEventListener("click", () => {
-    const conteudo = lista.innerHTML;
+// ---- EXPORTAR PDF ----
+document.getElementById("btnExportarPDF").addEventListener("click", () => {
 
-    const janela = window.open("", "_blank");
-    janela.document.write(`
-        <html><head><title>Relatório Rochas Açaí</title></head><body>
-        <h1>Relatório de Vendas - Rochas Açaí</h1>
-        ${conteudo}
-        </body></html>
-    `);
-    janela.print();
+    let conteudoPDF = `
+RELATÓRIO ROCHAS AÇAÍ
+-------------------------
+
+Vendas de hoje:
+
+${vendas.map(v => `${v.hora} - ${v.peso}kg - R$ ${v.total}`).join("\n")}
+`;
+
+    let blob = new Blob([conteudoPDF], { type: "application/pdf" });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Relatorio_Rochas_Acai.pdf";
+    link.click();
 });
