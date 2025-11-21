@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Rochas Açaí — PDV</title>
 
+<!-- CSS -->
 <link rel="stylesheet" href="./style.css">
-  <link rel="manifest" href="manifest.json">
+
+<!-- Manifest -->
+<link rel="manifest" href="manifest.json">
 
 <meta name="theme-color" content="#5A189A">
 </head>
@@ -19,12 +22,13 @@
   <h1>ROCHAS AÇAÍ — PDV</h1>
 </header>
 
-<!-- BOTÕES NO TOPO -->
+<!-- BOTÕES SUPERIORES -->
 <nav class="top-buttons">
     <a href="config.html" class="nav-btn">⚙ Configurações</a>
     <a href="relatorio.html" class="nav-btn">📄 Relatório</a>
 </nav>
 
+<!-- PAINEL PRINCIPAL -->
 <section class="panel">
   <div class="label">Peso</div>
   <div id="weight" class="big">0 g</div>
@@ -33,7 +37,9 @@
   <div id="total" class="big">R$ 0,00</div>
 </section>
 
+<!-- CONTROLES -->
 <section class="controls">
+
   <button id="connectScale" class="btn primary">Conectar Balança</button>
 
   <div class="priceBox">
@@ -44,11 +50,12 @@
   <button id="charge" class="btn gold">COBRAR</button>
 </section>
 
+<!-- ÁREA DO QR CODE -->
 <section id="paymentArea" class="paymentArea">
-  <div id="qrWrap"></div>
+    <div id="qrWrap"></div>
 </section>
 
-<!-- MODAL PAGAMENTO -->
+<!-- MODAL DE PAGAMENTO -->
 <div id="payModal" class="modal hidden">
   <div class="modal-box">
     <h2>Escolha a forma de pagamento</h2>
@@ -59,8 +66,10 @@
   </div>
 </div>
 
-</div>
+</div> <!-- fim do app -->
 
+<!-- SCRIPT DO PDV -->
 <script src="app.js"></script>
+
 </body>
 </html>
