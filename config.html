@@ -17,8 +17,13 @@
   </style>
 </head>
 <body>
-  <main class="app">
-    <h1 style="text-align:center;margin:8px 0 20px">Configurações do PDV</h1>
+<script>
+if(localStorage.getItem("logado") !== "sim"){
+    window.location.href = "login.html";
+}
+</script>
+
+<main class="app">    <h1 style="text-align:center;margin:8px 0 20px">Configurações do PDV</h1>
 
     <div class="form">
       <label for="precoInput">Preço por 100g (ex: 5.49)</label>
