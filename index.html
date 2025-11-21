@@ -1,27 +1,42 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDV Rochas Açaí</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDV Rochas Açaí</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <!-- TOPO -->
-    <header class="topo">
-        <img src="logo.png" class="logo">
-        <p class="unidade" id="unidadeNome">Unidade Ilha 9</p>
-    </header>
+<div class="topo">
+    <img src="logo.png" class="logo">
+    <h2 id="unidade">Unidade Ilha 9</h2>
+</div>
 
-    <!-- TELA PRINCIPAL -->
-    <main class="principal">
-        <h1 id="peso">0 g</h1>
-        <h2 id="total">R$ 0,00</h2>
-        <p class="preco">R$ <span id="precoAtual">5,49</span> / 100g</p>
-        <button class="btn" onclick="cobrar()">COBRAR</button>
-    </main>
+<div class="peso">
+    <h1 id="pesoDisplay">0.000 kg</h1>
+</div>
 
-</body>
+<div class="total">
+    <h2 id="totalDisplay">R$ 0,00</h2>
+    <p id="precoInfo">R$ 5,49 / 100g</p>
+</div>
+
+<button class="btn-cobrar">COBRAR</button>
+
+<div class="menu">
+    <a href="config.html" class="menuBtn">Configurações</a>
+    <a href="relatorio.html" class="menuBtn">Relatório</a>
+</div>
+
 <script src="app.js"></script>
+</body>
 </html>
+
+
+
+
+
+
+
