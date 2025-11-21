@@ -1,54 +1,31 @@
-// ===== CONFIGURAÇÃO INICIAL =====
-let preco100g = localStorage.getItem("preco100g");
-let unidade = localStorage.getItem("unidade");
+// ===== CONFIGURAÇÕES =====
+let precoPor100g = localStorage.getItem("preco") ? Number(localStorage.getItem("preco")) : 5.49;
+let unidadeNome = localStorage.getItem("unidade") || "Unidade Ilha 9";
 
-// Se não estiver configurado, define valores padrão
-if (!preco100g) {
-  preco100g = 5.49;
-  localStorage.setItem("preco100g", preco100g);
-}
-
-if (!unidade) {
-  unidade = "Ilha 9";
-  localStorage.setItem("unidade", unidade);
-}
-
-// Atualiza o texto no topo
-document.getElementById("unidadeLabel").innerText = `Unidade ${unidade}`;
-document.getElementById("preco100gLabel").innerText = `R$ ${preco100g} / 100g`;
+// Atualiza o texto da unidade
+document.getElementById("unidade").innerText = unidadeNome;
 
 
-// ===== FUNÇÃO PARA ATUALIZAR O PDV =====
-function atualizarPDV(pesoKg) {
-  const precoPorKg = preco100g * 10; // 100g * 10 = 1kg
-  const total = pesoKg * precoPorKg;
+// ===== FUNÇÃO PARA ATUALIZAR TELA =====
+function atualizarDisplay(pesoKg) {
 
-  document.getElementById("pesoLabel").innerText = pesoKg.toFixed(3) + " kg";
-  document.getElementById("totalLabel").innerText = "R$ " + total.toFixed(2);
+    let total = pesoKg * (precoPor100g * 10); // 100g → multiplicador *10
+
+    document.getElementById("pesoDisplay").innerText = pesoKg.toFixed(3) + " kg";
+    document.getElementById("totalDisplay").innerText = "R$ " + total.toFixed(2);
+    document.getElementById("precoInfo").innerText = "R$ " + precoPor100g.toFixed(2) + " / 100g";
 }
 
 
-// ===== SIMULADOR DE BALANÇA (POR ENQUANTO) =====
-// Você depois conecta a balança real por USB
-let pesoSimulado = 0;
-
+// ===== SIMULAÇÃO DE PESAGEM (VAI SER BALANÇA DEPOIS) =====
+// Altere aqui somente para testar
 setInterval(() => {
-  atualizarPDV(pesoSimulado);
-}, 500);
+    let pesoFake = Math.random() * 0.800; // até 800g
+    atualizarDisplay(pesoFake);
+}, 1500);
 
 
-// ===== BOTÃO DE COBRAR =====
-document.getElementById("btnCobrar").addEventListener("click", () => {
-  alert("Pagamento iniciado! (Integração a implementar)");
-});
-
-
-// ===== NAVEGAÇÃO PARA CONFIGURAÇÕES =====
-document.getElementById("btnConfig").addEventListener("click", () => {
-  window.location.href = "config.html";
-});
-
-// ===== NAVEGAÇÃO PARA RELATÓRIO =====
-document.getElementById("btnRelatorio").addEventListener("click", () => {
-  window.location.href = "relatorio.html";
+// ===== BOTÃO COBRAR =====
+document.querySelector(".btn-cobrar").addEventListener("click", () => {
+    alert("Iniciando pagamento… (integração depois)");
 });
