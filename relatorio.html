@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relatório de Vendas</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Vendas</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <main class="relatorio-container">
 
-<h2 class="titulo">Relatório de Vendas</h2>
+        <h1>Relatório de Vendas</h1>
 
-<div class="card">
-    <p id="relatorioTexto">Nenhuma venda hoje.</p>
-    <button class="btn-salvar" onclick="exportarRelatorio()">Exportar Relatório do Dia</button>
-</div>
+        <div id="listaRelatorio" class="lista-relatorio">
+            Nenhuma venda hoje.
+        </div>
 
-<a class="voltar" href="index.html">Voltar</a>
+        <!-- BOTÃO EXPORTAR PDF (AGORA NO LUGAR CERTO) -->
+        <button id="btnExportPdf" class="btn-cobrar" style="margin-top:25px;">
+            Exportar PDF
+        </button>
 
-<script src="relatorio.js"></script>
+        <a href="index.html" class="menu-btn" style="margin-top:25px;">Voltar</a>
+
+    </main>
+
+    <script src="relatorio.js" defer></script>
 </body>
 </html>
