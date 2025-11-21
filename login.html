@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acesso Restrito</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="center">
+
+<h2>Acesso Restrito</h2>
+<p>Digite a senha para continuar:</p>
+
+<input id="senhaInput" type="password" placeholder="Senha" class="input">
+
+<button class="btn" onclick="verificarSenha()">Entrar</button>
+
+<script>
+    function verificarSenha() {
+        const senhaDigitada = document.getElementById("senhaInput").value.trim();
+        const senhaCorreta = "acesso123"; // 🔑 altere quando quiser
+
+        // Última página acessada
+        const destino = localStorage.getItem("destinoProtegido");
+
+        if (senhaDigitada === senhaCorreta) {
+            window.location.href = destino; 
+        } else {
+            alert("Senha incorreta!");
+        }
+    }
+</script>
+
+</body>
+</html>
