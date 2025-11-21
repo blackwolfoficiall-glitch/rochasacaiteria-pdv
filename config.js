@@ -1,17 +1,21 @@
-// Carregar valores existentes
-document.getElementById("precoInput").value = localStorage.getItem("preco") || "5.49";
-document.getElementById("unidadeInput").value = localStorage.getItem("unidade") || "Ilha 9";
+// Carregar valores salvos
+document.getElementById("inputPreco").value = localStorage.getItem("preco") || "5.49";
+document.getElementById("inputUnidade").value = localStorage.getItem("unidade") || "Ilha 9";
 
 // Botão salvar
 document.getElementById("btnSalvar").addEventListener("click", () => {
     
-    let novoPreco = document.getElementById("precoInput").value;
-    let novaUnidade = document.getElementById("unidadeInput").value;
+    let preco = document.getElementById("inputPreco").value.replace(",", ".");
+    let unidade = document.getElementById("inputUnidade").value;
 
-    localStorage.setItem("preco", novoPreco);
-    localStorage.setItem("unidade", novaUnidade);
+    if (!preco || isNaN(preco)) {
+        alert("Digite um preço válido!");
+        return;
+    }
+
+    localStorage.setItem("preco", preco);
+    localStorage.setItem("unidade", unidade);
 
     alert("Configurações salvas!");
-
-    window.location.href = "index.html";
+    window.location.href = "index.html";  // Voltar ao PDV
 });
