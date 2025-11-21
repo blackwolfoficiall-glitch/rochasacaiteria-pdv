@@ -1,41 +1,72 @@
-<!doctype html>
-<html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PDV Rochas Açaí</title>
-
-  <!-- Fonte e ícones -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDV Rochas Açaí</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <main class="app">
-    <header class="top">
-      <img src="logo.png" alt="Rochas Açaí" class="logo" />
-      <div id="unidade" class="unidade">Unidade</div>
-    </header>
+
+<header class="topo">
+    <img src="logo.png" class="logo">
+    <h2 id="unidade">Unidade Ilha 9</h2>
+</header>
+
+<main>
 
     <section class="display" aria-live="polite">
-      <div class="peso-big">
-        <h1 id="pesoDisplay">0.000 kg</h1>
-      </div>
+        <div class="peso-big">
+            <h1 id="pesoDisplay">0.000 kg</h1>
+        </div>
 
-      <div class="valor">
-        <div class="total" id="totalDisplay">R$ 0,00</div>
-        <div class="preco-info" id="precoInfo">R$ 0,00 / 100g</div>
-      </div>
+        <div class="valor">
+            <div class="total" id="totalDisplay">R$ 0,00</div>
+            <div class="preco-info" id="precoInfo">R$ 5,49 / 100g</div>
+        </div>
     </section>
 
     <button class="btn-cobrar" id="btnCobrar">COBRAR</button>
 
-      <a href="config.html" class="menu-btn">Configurações</a>
-      <a href="relatorio.html" class="menu-btn">Relatório</a>
+    <nav class="menu">
+        <a href="#" id="btnConfig" class="menu-btn">Configurações</a>
+        <a href="#" id="btnRelatorio" class="menu-btn">Relatório</a>
     </nav>
-  </main>
 
-  <script src="app.js" defer></script>
+</main>
+
+<script>
+// ===============================
+//   SISTEMA DE SENHAS
+// ===============================
+
+const senhaCorreta = "2024"; // <<< SENHA PADRÃO (pode mudar)
+
+// Proteção do botão CONFIGURAÇÕES
+document.getElementById("btnConfig").addEventListener("click", () => {
+    let senha = prompt("Digite a senha de acesso:");
+
+    if (senha === senhaCorreta) {
+        window.location.href = "config.html";
+    } else {
+        alert("Senha incorreta!");
+    }
+});
+
+// Proteção do botão RELATÓRIO
+document.getElementById("btnRelatorio").addEventListener("click", () => {
+    let senha = prompt("Digite a senha de acesso:");
+
+    if (senha === senhaCorreta) {
+        window.location.href = "relatorio.html";
+    } else {
+        alert("Senha incorreta!");
+    }
+});
+</script>
+
+<script src="app.js" defer></script>
+
 </body>
 </html>
