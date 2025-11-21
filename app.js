@@ -98,8 +98,7 @@ async function createPayment(method){
   }
 
   // 🔥 TROCAR PELA URL DO SEU BACKEND (Render/Railway)
-  const BACKEND = "https://SEU-BACKEND.onrender.com";
-
+  const BACKEND = "https://rochas-backend.onrender.com";
   const resp = await fetch(`${BACKEND}/create_payment?method=${method}`,{
     method:"POST",
     headers:{ "Content-Type":"application/json" },
