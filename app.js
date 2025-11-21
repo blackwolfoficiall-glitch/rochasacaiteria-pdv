@@ -1,23 +1,53 @@
+let preco100 = localStorage.getItem("preco100") || 5.49;
+let unidade = localStorage.getItem("unidade") || "Ilha 9";
+let peso = 0;
 
-console.log('PDV WebApp iniciado');
-console.log("PDV WebApp iniciado");
+// Exibir na tela
+document.getElementById("unidadeNome").innerText = "Unidade " + unidade;
+document.getElementById("preco100g").innerText = "R$ " + preco100 + " / 100g";
 
-// Preço por kg
-const precoPorKg = 64.90;
+// --- Simulação de peso (depois substituímos pela balança REAL)
+setInterval(() => {
+    peso = (Math.random() * 0.700).toFixed(3); // 0 a 700g
+    mostrarPeso();
+}, 1500);
 
-// Atualiza o peso e total
-function atualizarValores(pesoKg) {
-    document.getElementById("peso").innerText = pesoKg.toFixed(3) + " kg";
-    const total = pesoKg * precoPorKg;
-    document.getElementById("total").innerText = "R$ " + total.toFixed(2);
+function mostrarPeso() {
+    document.getElementById("pesoValor").innerText = (peso * 1000).toFixed(0) + " g";
+
+    let total = (peso * (preco100 / 0.1)).toFixed(2);
+    document.getElementById("precoValor").innerText = "R$ " + total;
 }
 
-// Exemplo de simulação de peso — depois podemos integrar com balança real
-let pesoAtual = 0;
+function cobrar() {
+    alert("Pagamento futuramente integrado ×");
+}
 
-// Simula peso aumentando
-setInterval(() => {
-    pesoAtual += 0.010; // 10 gramas
-    if (pesoAtual > 1.000) pesoAtual = 0;
-    atualizarValores(pesoAtual);
-}, 500);
+function abrirConfig() {
+    mudarTela("tela-config");
+    document.getElementById("inputPreco").value = preco100;
+    document.getElementById("inputUnidade").value = unidade;
+}
+
+function salvarConfig() {
+    preco100 = document.getElementById("inputPreco").value;
+    unidade = document.getElementById("inputUnidade").value;
+
+    localStorage.setItem("preco100", preco100);
+    localStorage.setItem("unidade", unidade);
+
+    location.reload();
+}
+
+function exportar() {
+    alert("Relatório será gerado futuramente ✓");
+}
+
+function voltar() {
+    mudarTela("tela-peso");
+}
+
+function mudarTela(id) {
+    document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+    document.getElementById(id).classList.add("ativa");
+}
