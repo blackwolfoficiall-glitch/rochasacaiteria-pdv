@@ -1,32 +1,15 @@
-let preco100 = 5.49; // preço por 100g
-let pesoAtual = 0;
+console.log("PDV Ativado");
 
-// Simulação de leitura da balança
-setInterval(() => {
-    // NUM REAL: Aqui entra o peso vindo da balança ESC POS / USB
-    pesoAtual = (Math.random() * 500).toFixed(0); 
-    atualizarTela();
-}, 1200);
+// carregar configuração
+let preco = localStorage.getItem("preco100") || 5.49;
+let unidade = localStorage.getItem("unidade") || "Ilha 9";
 
-// atualiza interface
-function atualizarTela() {
-    document.getElementById("peso").textContent = pesoAtual + " g";
-    
-    let total = (pesoAtual / 100 * preco100);
-    document.getElementById("total").textContent = "R$ " + total.toFixed(2).replace('.', ',');
-    
-    document.getElementById("precoAtual").textContent = preco100.toFixed(2).replace('.', ',');
-}
+document.getElementById("unidade").innerText = "Unidade " + unidade;
+document.getElementById("precoInfo").innerText = "R$ " + preco + " / 100g";
 
-// simula cobrança
-function cobrar() {
-    alert("Pagamento seria enviado aqui. Integração futura.");
-}
+// simulação de peso
+let peso = 0.300; // exemplo
+document.getElementById("pesoDisplay").innerText = peso.toFixed(3) + " kg";
 
-
-
-
-
-
-
-
+let total = peso * (preco * 10);
+document.getElementById("totalDisplay").innerText = "R$ " + total.toFixed(2);
