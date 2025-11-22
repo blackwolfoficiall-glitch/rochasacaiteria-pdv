@@ -16,31 +16,35 @@ if(localStorage.getItem("logado") !== "sim"){
 </script>
 
 <main class="app">
-    <h1 style="text-align:center;margin:8px 0 20px">Configurações do PDV</h1>
+    <h1 style="text-align:center;margin:8px 0 20px;">Configurações do PDV</h1>
 
     <div class="form">
 
         <label for="precoInput">Preço por 100g</label>
-        <input id="precoInput" type="text" inputmode="decimal">
+        <input id="precoInput" type="text">
 
         <label for="unidadeInput" style="margin-top:12px">Nome da Unidade</label>
         <input id="unidadeInput" type="text">
 
-        <button class="btn-save" onclick="salvarConfig()">SALVAR</button>
-        <a class="back" href="index.html">Voltar</a>
+        <button class="btn-save" onclick="salvar()">Salvar</button>
+
+        <a href="index.html" class="back">⬅ Voltar</a>
     </div>
 </main>
 
 <script>
-function salvarConfig(){
-    const preco = document.getElementById("precoInput").value;
-    const unidade = document.getElementById("unidadeInput").value;
-
-    localStorage.setItem("preco100", preco);
-    localStorage.setItem("unidade", unidade);
+function salvar(){
+    localStorage.setItem("preco100", document.getElementById("precoInput").value);
+    localStorage.setItem("unidade", document.getElementById("unidadeInput").value);
 
     alert("Configurações salvas!");
+    window.location.href = "index.html";
 }
+
+window.onload = () => {
+    document.getElementById("precoInput").value = localStorage.getItem("preco100") || "5,00";
+    document.getElementById("unidadeInput").value = localStorage.getItem("unidade") || "";
+};
 </script>
 
 </body>
