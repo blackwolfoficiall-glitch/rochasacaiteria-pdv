@@ -3,8 +3,7 @@
    2) Quando integrar maquininha/SDK, substitua a função `simulateScale` pela leitura real.
 */
 
-const BACKEND = "https://SEU_BACKEND.onrenderer.com"; // <<--- Troque aqui
-
+const BACKEND = "https://rochas-backend.onrender.com";
 // elementos
 const weightEl = document.getElementById("weight");
 const totalEl = document.getElementById("total");
