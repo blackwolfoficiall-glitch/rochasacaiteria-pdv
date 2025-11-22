@@ -1,35 +1,40 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Vendas</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Vendas</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
 <script>
 if(localStorage.getItem("logado") !== "sim"){
     window.location.href = "login.html";
 }
-</script>    
-    <main class="container-relatorio">
+</script>
 
-        <h1>Relatório de Vendas</h1>
+<main class="container-relatorio">
 
-        <div id="listaVendas" class="lista-vendas">
-            Nenhuma venda hoje.
-        </div>
+    <h1>Relatório de Vendas</h1>
 
-        <button id="btnExportarPDF" class="btn-relatorio">
-            Exportar Relatório do Dia (PDF)
-        </button>
+    <div id="listaVendas" class="lista-vendas">
+        Nenhuma venda hoje.
+    </div>
 
-        <nav class="menu">
-            <a href="index.html" class="menu-btn">Voltar</a>
-        </nav>
+    <button id="btnExportarPDF" class="btn-relatorio" onclick="exportarPDF()">
+        Exportar PDF
+    </button>
 
-    </main>
+    <a class="back" href="index.html">Voltar</a>
+</main>
 
-    <script src="relatorio.js" defer></script>
+<script>
+function exportarPDF(){
+    alert("Função de exportar PDF será ativada em breve.");
+}
+</script>
+
 </body>
 </html>
