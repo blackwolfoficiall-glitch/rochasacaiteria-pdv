@@ -1,189 +1,100 @@
+/* STYLE: Rochas Açaí — PDV (clean, responsivo) */
 
+/* variáveis */
 :root{
-  --roxo:#5A189A;
-  --roxo-escuro:#3C096C;
-  --roxo-fundo:#240046;
-  --dourado:#FFD700;
-  --branco:#ffffff;
-  --cinza:#cccccc;
+  --roxo-escuro: #2f034d;
+  --roxo: #5A189A;
+  --roxo-claro: #7b2ebf;
+  --amarelo: #f5c400;
+  --branco: #ffffff;
+  --card-bg: rgba(255,255,255,0.04);
 }
 
-*{
-  box-sizing:border-box;
-  font-family: 'Inter', Arial, sans-serif;
-}
+/* reset simples */
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,Arial,sans-serif}
+html,body,#app{height:100%}
 
+/* body/background */
 body{
-  margin:0;
-  background: linear-gradient(180deg, var(--roxo-escuro), var(--roxo-fundo));
+  background: linear-gradient(180deg,#2b0a48 0%, #3a0c5b 50%, #4b0d65 100%);
   color:var(--branco);
-  height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
-#app{
+/* header/top */
+.topbar{
   display:flex;
-  flex-direction:column;
-  max-width:480px;
-  margin:auto;
-  padding:20px;
-}
-
-header{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px;
-}
-
-.logo{
-  height:55px;
-}
-
-h1{
-  font-size:22px;
-  font-weight:700;
-  margin:0;
-  color:var(--dourado);
-}
-
-/* TOP BUTTONS */
-.top-buttons {
-  display:flex;
-  justify-content:flex-end;
-  gap:12px;
-  margin-bottom:15px;
-}
-
-.nav-btn{
-  text-decoration:none;
-  color:#fff;
-  background:rgba(255,255,255,0.1);
-  padding:8px 12px;
-  border-radius:6px;
-  font-size:14px;
-  transition:0.2s;
-}
-
-.nav-btn:hover{
-  background:rgba(255,255,255,0.25);
-}
-
-.panel{
-  background:rgba(255,255,255,0.1);
-  padding:25px;
-  border-radius:14px;
-  text-align:center;
-  margin-bottom:20px;
-}
-
-.label{
-  opacity:0.8;
-  font-size:16px;
-}
-
-.big{
-  font-size:48px;
-  font-weight:700;
-  margin:10px 0;
-}
-
-.controls{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.btn{
-  padding:15px;
-  font-size:20px;
-  font-weight:700;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.primary{
-  background:var(--roxo);
-  color:#fff;
-}
-
-.gold{
-  background:var(--dourado);
-  color:black;
-}
-
-.priceBox{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-
-.priceBox input{
-  padding:14px;
-  border-radius:8px;
-  border:none;
-  font-size:20px;
-}
-
-.paymentArea{
-  text-align:center;
-  margin-top:30px;
-}
-
-.paymentArea img{
-  max-width:260px;
-}
-
-/* MODAL */
-.modal{
-  position:fixed;
-  top:0;left:0;right:0;bottom:0;
-  background:rgba(0,0,0,0.6);
-  display:flex;
+  gap:16px;
   align-items:center;
   justify-content:center;
-  z-index:9999;
+  padding:28px 16px 0 16px;
+  position:relative;
+}
+.logo-wrap{width:110px;height:56px;border-radius:6px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center}
+.logo{max-width:100%;max-height:50px;object-fit:contain}
+.brand{font-weight:700;color:var(--amarelo);font-size:28px}
+.unit-name{font-size:20px;font-weight:700;color:var(--amarelo)}
+
+/* top buttons */
+.top-buttons{position:absolute;right:18px;top:28px;display:flex;gap:8px}
+.nav-btn{
+  background:rgba(255,255,255,0.08);
+  color:var(--branco);
+  border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;
+  box-shadow:0 4px 8px rgba(0,0,0,0.25);
+}
+.nav-btn:hover{transform:translateY(-1px);}
+
+/* main container */
+.container{
+  max-width:720px;margin:32px auto;padding:8px 18px 48px 18px;text-align:center;
 }
 
-.modal.hidden{
-  display:none;
+/* card principal */
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:14px;padding:34px 18px 44px;box-shadow:0 10px 30px rgba(0,0,0,0.45);
+  margin-bottom:18px;
+}
+.label{opacity:0.9;font-weight:600;margin-bottom:6px}
+.weight{font-size:44px;font-weight:800;margin-bottom:6px}
+.total{font-size:40px;font-weight:800;margin-top:6px}
+
+/* fields and buttons */
+.field{max-width:520px;margin:8px auto 18px;text-align:left}
+.field label{display:block;margin-bottom:6px;font-weight:600}
+.field input[type="text"]{
+  width:100%;padding:14px;border-radius:10px;border:0;background:rgba(255,255,255,0.95);font-weight:700;color:#111;
+  font-size:18px;box-shadow:inset 0 2px 6px rgba(0,0,0,0.15)
 }
 
-.modal-box{
-  background:white;
-  width:320px;
-  padding:20px;
-  border-radius:12px;
-  color:black;
-  text-align:center;
-}
+/* buttons */
+.btn{display:block;width:100%;max-width:520px;margin:14px auto;padding:16px;border-radius:12px;border:0;font-weight:800;cursor:pointer}
+.btn-primary{background:linear-gradient(180deg,var(--roxo-claro),var(--roxo));color:var(--branco);box-shadow:0 8px 18px rgba(0,0,0,0.35)}
+.btn-primary:active{transform:translateY(2px)}
+.btn-cta{background:linear-gradient(180deg,var(--amarelo),#e6b300);color:#111}
+.pay-btn{margin:8px;padding:12px 18px;border-radius:10px;border:0;background:var(--roxo);color:var(--branco);font-weight:700;cursor:pointer}
+.pay-btn.cancel{background:#777}
 
-.modal-box h2{
-  margin-bottom:15px;
-}
+/* modal */
+.modal{position:fixed;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:1000}
+.modal.hidden{display:none}
+.modal-content{background:linear-gradient(180deg, #fff, #fff);color:#111;padding:20px;border-radius:12px;max-width:420px;width:94%;position:relative}
+.modal-content h2{margin-bottom:12px;text-align:center}
+.modal-content .close{position:absolute;right:8px;top:8px;border:0;background:transparent;font-size:22px;cursor:pointer}
 
-.opt{
-  width:100%;
-  padding:12px;
-  border-radius:8px;
-  border:none;
-  font-size:18px;
-  margin-top:10px;
-  color:white;
-  cursor:pointer;
-}
+/* qr */
+.qr-wrap{margin-top:12px;text-align:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#222;padding:10px 16px;border-radius:8px;color:#fff;z-index:1200}
+.toast.hidden{display:none}
 
-.debit{background:#00A36C;}
-.credit{background:#0077FF;}
-.pix{background:#32CD32;}
-
-.close{
-  width:100%;
-  padding:10px;
-  background:#777;
-  color:white;
-  border:none;
-  border-radius:8px;
-  margin-top:12px;
-  cursor:pointer;
+/* responsivo */
+@media (max-width:600px){
+  .brand{display:none}
+  .unit-name{font-size:16px}
+  .logo-wrap{width:86px;height:44px}
+  .card{padding:22px}
+  .weight{font-size:36px}
+  .total{font-size:28px}
 }
