@@ -1,125 +1,119 @@
-/* app.js — Rochas Açaí PDV */
+/** server.js – Backend PDV Rochas Açaí */
 
-// URL DO SEU BACKEND (Render)
-const BACKEND = "https://rochasa-backend.onrender.com";
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const fetch = require("node-fetch");
 
-// ELEMENTOS DA TELA
-const weightEl = document.getElementById("weight");
-const totalEl = document.getElementById("total");
-const priceInput = document.getElementById("price100");
+// TOKEN DO MERCADO PAGO (Render)
+const MP_TOKEN = process.env.MP_ACCESS_TOKEN || null;
+const PORT = process.env.PORT || 3000;
 
-const btnConnectScale = document.getElementById("btnConnectScale");
-const btnCharge = document.getElementById("btnCharge");
-const btnConfig = document.getElementById("btnConfig");
-const btnReport = document.getElementById("btnReport");
-
-const payModal = document.getElementById("payModal");
-const closeModal = document.getElementById("closeModal");
-const cancelPay = document.getElementById("cancelPay");
-
-const optDebit = document.getElementById("optDebit");
-const optCredit = document.getElementById("optCredit");
-const optPix = document.getElementById("optPix");
-
-const qrWrap = document.getElementById("qrWrap");
-const toast = document.getElementById("toast");
-
-let grams = 0;
-
-// FORMATADOR
-function formatBRL(n) {
-  return "R$ " + Number(n).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+if (!MP_TOKEN) {
+    console.warn("⚠️ AVISO: MP_ACCESS_TOKEN não configurado. Pagamentos não vão funcionar.");
 }
 
-// TOAST
-function showToast(msg) {
-  toast.textContent = msg;
-  toast.classList.remove("hidden");
-  setTimeout(() => toast.classList.add("hidden"), 2500);
-}
+const app = express();
 
-// SIMULAÇÃO DE BALANÇA (trocar futuramente)
-function simulateScale() {
-  grams = Math.floor(Math.random() * 500 + 20); // 20g–500g
-  weightEl.textContent = grams + " g";
+// libera front-end
+app.use(cors());
+app.use(bodyParser.json());
 
-  let preco = parseFloat(priceInput.value.replace(",", "."));
-  if (isNaN(preco)) preco = 0;
-  const total = (grams / 100) * preco;
+/* ============================================================
+   PIX
+=============================================================== */
+async function createPixPayment(amount, description) {
+    const url = "https://api.mercadopago.com/v1/payments";
 
-  totalEl.textContent = formatBRL(total);
-}
+    const body = {
+        transaction_amount: amount,
+        description,
+        payment_method_id: "pix",
+        payer: { email: "pagador@acai.com" }
+    };
 
-// BOTÃO DE CONECTAR BALANÇA
-btnConnectScale.onclick = () => {
-  showToast("Balança simulada conectada!");
-  setInterval(simulateScale, 1500);
-};
-
-// BOTÃO COBRAR
-btnCharge.onclick = () => {
-  if (grams <= 0) {
-    showToast("Peso inválido!");
-    return;
-  }
-  payModal.classList.remove("hidden");
-};
-
-// FECHAR MODAL
-closeModal.onclick = () => payModal.classList.add("hidden");
-cancelPay.onclick = () => payModal.classList.add("hidden");
-
-// PAGAMENTO (ENVIO DE REQUISIÇÃO AO BACKEND)
-async function enviarPagamento(tipo) {
-  showToast("Criando pagamento...");
-
-  let valorNum = parseFloat(
-    totalEl.textContent.replace("R$", "").replace(",", ".")
-  );
-
-  try {
-    const res = await fetch(`${BACKEND}/pay`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: valorNum,
-        method: tipo,
-      }),
+    const r = await fetch(url, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${MP_TOKEN}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
     });
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      showToast("Erro no pagamento");
-      return;
-    }
-
-    // PIX
-    if (data.qr) {
-      qrWrap.classList.remove("hidden");
-      qrWrap.innerHTML = `<img src="${data.qr}" class="qr-img">`;
-    }
-
-    showToast("Pagamento enviado à maquininha!");
-  } catch (e) {
-    showToast("Erro de rede");
-  }
+    return await r.json();
 }
 
-// EVENTOS DE PAGAMENTO
-optDebit.onclick = () => enviarPagamento("debit");
-optCredit.onclick = () => enviarPagamento("credit");
-optPix.onclick = () => enviarPagamento("pix");
+/* ============================================================
+   CARTÃO (CRÉDITO/DÉBITO)
+=============================================================== */
+async function createCardPreference(amount, description, method) {
+    const url = "https://api.mercadopago.com/checkout/preferences";
 
-// NAVEGAÇÃO (CONFIG E RELATÓRIO COM SENHA)
-btnConfig.onclick = () => {
-  const s = prompt("Senha da gerência:");
-  if (s === "1901") window.location.href = "config.html";
-  else showToast("Senha incorreta!");
-};
+    const excluded =
+        method === "debit"
+            ? [{ id: "credit_card" }]
+            : [{ id: "debit_card" }];
 
-btnReport.onclick = () => {
-  const s = prompt("Senha da gerência:");
-  if (s === "1901") window.location.href = "relatorio.html";
-  else showToast("Senha incorreta!");
-};
+    const body = {
+        items: [
+            {
+                title: description,
+                quantity: 1,
+                unit_price: amount
+            }
+        ],
+        payment_methods: {
+            excluded_payment_types: excluded,
+            installments: method === "debit" ? 1 : 12
+        }
+    };
+
+    const r = await fetch(url, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${MP_TOKEN}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+
+    return await r.json();
+}
+
+/* ============================================================
+   ENDPOINT DE PAGAMENTO
+=============================================================== */
+app.post("/create_payment", async (req, res) => {
+    try {
+        const method = (req.query.method || "").toLowerCase();
+        const { amount, description } = req.body;
+
+        if (!amount) {
+            return res.status(400).json({ error: "amount required" });
+        }
+
+        if (method === "pix") {
+            const pix = await createPixPayment(amount, description);
+            return res.json(pix);
+        }
+
+        if (method === "debit" || method === "credit") {
+            const pref = await createCardPreference(amount, description, method);
+            return res.json(pref);
+        }
+
+        return res.status(400).json({ error: "invalid payment method" });
+
+    } catch (e) {
+        console.error("❌ ERRO /create_payment:", e);
+        return res.status(500).json({ error: "internal server error", details: e.toString() });
+    }
+});
+
+/* ============================================================
+   SERVIDOR
+=============================================================== */
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor PDV rodando na porta ${PORT}`);
+});
