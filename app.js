@@ -152,11 +152,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Atualizar total ao mudar preço
-  if (priceInput) {
-    priceInput.addEventListener("input", updateTotal);
-  }
+  // --------- Função para pegar o preço atual do input ----------
+function getCurrentPrice() {
+  if (!priceInput) return 0;
 
+  const raw = (priceInput.value || "0").trim();
+
+  // converte "5,90" -> 5.90
+  const normalized = raw
+    .replace(/\./g, "")   // tira pontos de milhar
+    .replace(",", ".");   // troca vírgula por ponto
+
+  const n = Number(normalized);
+  return isNaN(n) ? 0 : n;
+}
+
+// --------- Atualiza o total na tela ----------
+function updateTotal() {
+  if (!totalEl) return;
+
+  const price = getCurrentPrice();     // preço por 100g
+  const total = (currentGrams / 100) * price;
+
+  totalEl.textContent = formatBRL(total);
+}
+
+// Atualizar total ao mudar preço
+if (priceInput) {
+  priceInput.addEventListener("input", () => {
+    // salva o preço novo
+    localStorage.setItem("price100", priceInput.value || "0");
+    // recalcula o total
+    updateTotal();
+  });
+}
   // Botão COBRAR
   if (btnCharge) {
     btnCharge.addEventListener("click", () => {
