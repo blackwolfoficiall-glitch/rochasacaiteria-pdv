@@ -1,119 +1,195 @@
-/** server.js – Backend PDV Rochas Açaí */
+// URL do backend no Render
+const BACKEND = "https://rochasa-backend.onrender.com";
 
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const fetch = require("node-fetch");
+document.addEventListener("DOMContentLoaded", () => {
+  const weightEl = document.getElementById("weight");
+  const totalEl = document.getElementById("total");
+  const priceInput = document.getElementById("price100");
+  const btnConnectScale = document.getElementById("btnConnectScale");
+  const btnCharge = document.getElementById("btnCharge");
 
-// TOKEN DO MERCADO PAGO (Render)
-const MP_TOKEN = process.env.MP_ACCESS_TOKEN || null;
-const PORT = process.env.PORT || 3000;
+  const btnConfig = document.getElementById("btnConfig");
+  const btnReport = document.getElementById("btnReport");
 
-if (!MP_TOKEN) {
-    console.warn("⚠️ AVISO: MP_ACCESS_TOKEN não configurado. Pagamentos não vão funcionar.");
-}
+  const payModal = document.getElementById("payModal");
+  const closeModal = document.getElementById("closeModal");
+  const optDebit = document.getElementById("optDebit");
+  const optCredit = document.getElementById("optCredit");
+  const optPix = document.getElementById("optPix");
+  const cancelPay = document.getElementById("cancelPay");
+  const toastEl = document.getElementById("toast");
 
-const app = express();
+  let currentGrams = 0;
+  let scaleConnected = false;
 
-// libera front-end
-app.use(cors());
-app.use(bodyParser.json());
+  // ==== TOAST ====
+  function showToast(message, isError = false) {
+    if (!toastEl) return;
+    toastEl.textContent = message;
+    toastEl.classList.remove("hidden");
+    toastEl.classList.toggle("error", !!isError);
 
-/* ============================================================
-   PIX
-=============================================================== */
-async function createPixPayment(amount, description) {
-    const url = "https://api.mercadopago.com/v1/payments";
+    setTimeout(() => {
+      toastEl.classList.add("hidden");
+      toastEl.classList.remove("error");
+    }, 3000);
+  }
 
-    const body = {
-        transaction_amount: amount,
-        description,
-        payment_method_id: "pix",
-        payer: { email: "pagador@acai.com" }
-    };
+  // ==== CÁLCULO DO TOTAL ====
+  function parsePrice100() {
+    if (!priceInput) return 0;
+    const raw = priceInput.value.replace(".", "").replace(",", ".");
+    const v = parseFloat(raw);
+    return isNaN(v) ? 0 : v;
+  }
 
-    const r = await fetch(url, {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${MP_TOKEN}`,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
+  function updateTotal() {
+    const price100 = parsePrice100();
+    const total = (currentGrams / 100) * price100;
+    const formatted = total.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL"
     });
+    totalEl.textContent = formatted;
+  }
 
-    return await r.json();
-}
+  // ==== SIMULAÇÃO DE BALANÇA (enquanto a real não entra) ====
+  function startFakeScale() {
+    if (scaleConnected) return;
+    scaleConnected = true;
+    showToast("Balança conectada (modo demonstração)");
 
-/* ============================================================
-   CARTÃO (CRÉDITO/DÉBITO)
-=============================================================== */
-async function createCardPreference(amount, description, method) {
-    const url = "https://api.mercadopago.com/checkout/preferences";
-
-    const excluded =
-        method === "debit"
-            ? [{ id: "credit_card" }]
-            : [{ id: "debit_card" }];
-
-    const body = {
-        items: [
-            {
-                title: description,
-                quantity: 1,
-                unit_price: amount
-            }
-        ],
-        payment_methods: {
-            excluded_payment_types: excluded,
-            installments: method === "debit" ? 1 : 12
-        }
-    };
-
-    const r = await fetch(url, {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${MP_TOKEN}`,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
-    });
-
-    return await r.json();
-}
-
-/* ============================================================
-   ENDPOINT DE PAGAMENTO
-=============================================================== */
-app.post("/create_payment", async (req, res) => {
-    try {
-        const method = (req.query.method || "").toLowerCase();
-        const { amount, description } = req.body;
-
-        if (!amount) {
-            return res.status(400).json({ error: "amount required" });
-        }
-
-        if (method === "pix") {
-            const pix = await createPixPayment(amount, description);
-            return res.json(pix);
-        }
-
-        if (method === "debit" || method === "credit") {
-            const pref = await createCardPreference(amount, description, method);
-            return res.json(pref);
-        }
-
-        return res.status(400).json({ error: "invalid payment method" });
-
-    } catch (e) {
-        console.error("❌ ERRO /create_payment:", e);
-        return res.status(500).json({ error: "internal server error", details: e.toString() });
+    // Esconde o botão de conectar balança após conectar
+    if (btnConnectScale) {
+      btnConnectScale.style.display = "none";
     }
-});
 
-/* ============================================================
-   SERVIDOR
-=============================================================== */
-app.listen(PORT, () => {
-    console.log(`🚀 Servidor PDV rodando na porta ${PORT}`);
+    // atualiza peso de tempos em tempos, só pra simular
+    setInterval(() => {
+      // simulação: de 50g a 900g
+      currentGrams = Math.floor(50 + Math.random() * 850);
+      weightEl.textContent = `${currentGrams} g`;
+      updateTotal();
+    }, 2000);
+  }
+
+  // ==== CONTROLES DE PAGAMENTO ====
+  function openPaymentModal() {
+    if (!payModal) return;
+    payModal.classList.remove("hidden");
+  }
+
+  function closePaymentModal() {
+    if (!payModal) return;
+    payModal.classList.add("hidden");
+  }
+
+  async function createPayment(method) {
+    // Método: "debit" | "credit" | "pix"
+    const price100 = parsePrice100();
+    if (currentGrams <= 0 || price100 <= 0) {
+      showToast("Peso ou preço inválido", true);
+      return;
+    }
+
+    const total = (currentGrams / 100) * price100;
+
+    try {
+      showToast("Enviando pagamento...", false);
+
+      const resp = await fetch(`${BACKEND}/create_payment?method=${encodeURIComponent(method)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          amount: Number(total.toFixed(2)),
+          description: "Pedido PDV Rochas Açaí"
+        })
+      });
+
+      if (!resp.ok) {
+        const errTxt = await resp.text();
+        console.error("Erro na resposta:", errTxt);
+        showToast("Erro ao criar pagamento", true);
+        return;
+      }
+
+      const data = await resp.json();
+      console.log("Resposta Mercado Pago:", data);
+
+      if (method === "pix") {
+        showToast("PIX criado. Veja o QR Code na maquininha ou no app.", false);
+        // aqui daria pra exibir qrcode se o backend devolvesse a imagem/base64
+      } else {
+        showToast("Pagamento de cartão criado. Conclua na maquininha.", false);
+      }
+
+      closePaymentModal();
+    } catch (err) {
+      console.error("Erro de rede:", err);
+      showToast("Erro de rede ao criar pagamento", true);
+    }
+  }
+
+  // ==== SENHA CONFIG E RELATÓRIO ====
+  function askPasswordAndGo(path) {
+    const pass = prompt("Digite a senha (1901):");
+    if (pass === "1901") {
+      window.location.href = path;
+    } else if (pass !== null) {
+      showToast("Senha incorreta", true);
+    }
+  }
+
+  // ==== EVENTOS ====
+
+  // Botão conectar balança
+  if (btnConnectScale) {
+    btnConnectScale.addEventListener("click", () => {
+      // futuramente aqui entra a balança real via WebSerial/USB
+      startFakeScale();
+    });
+  }
+
+  // Atualizar total ao mudar preço
+  if (priceInput) {
+    priceInput.addEventListener("input", updateTotal);
+  }
+
+  // Botão COBRAR
+  if (btnCharge) {
+    btnCharge.addEventListener("click", () => {
+      if (currentGrams <= 0) {
+        showToast("Coloque o produto na balança antes de cobrar", true);
+        return;
+      }
+      openPaymentModal();
+    });
+  }
+
+  // Modal de pagamento
+  if (closeModal) {
+    closeModal.addEventListener("click", closePaymentModal);
+  }
+  if (cancelPay) {
+    cancelPay.addEventListener("click", closePaymentModal);
+  }
+  if (optDebit) {
+    optDebit.addEventListener("click", () => createPayment("debit"));
+  }
+  if (optCredit) {
+    optCredit.addEventListener("click", () => createPayment("credit"));
+  }
+  if (optPix) {
+    optPix.addEventListener("click", () => createPayment("pix"));
+  }
+
+  // Botões de Configuração e Relatório
+  if (btnConfig) {
+    btnConfig.addEventListener("click", () => askPasswordAndGo("config.html"));
+  }
+  if (btnReport) {
+    btnReport.addEventListener("click", () => askPasswordAndGo("relatorio.html"));
+  }
 });
