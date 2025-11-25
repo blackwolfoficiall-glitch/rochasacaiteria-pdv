@@ -11,14 +11,12 @@
 <!-- Manifesto (opcional) -->
 <link rel="manifest" href="manifest.json">
 
-<!-- meta -->
 <meta name="theme-color" content="#5A189A">
 </head>
-
 <body>
 <div id="app">
 
-<!-- topo: logo e nome da unidade -->
+<!-- topo -->
 <header class="top-bar">
 <div class="logo-wrapper">
 <img src="logo.png" alt="Logotipo Rochas" class="logo" id="logoImagem">
@@ -30,43 +28,51 @@
 
 <nav class="top-buttons">
 <button id="btnConfig" class="nav-button">⚙️ Configurações</button>
-<button id="btnRelatorio" class="nav-button">📄 Relatório</button>
+<button id="btnReport" class="nav-button">📄 Relatório</button>
 </nav>
 </header>
 
 <!-- painel central -->
 <main class="container">
-<section class="card" aria-live="polite">
+<section class="card">
 <div class="label">Peso</div>
-<div id="peso" class="peso">0 g</div>
+<div id="weight" class="weight">0 g</div>
 
 <div class="label">Total</div>
 <div id="total" class="total">R$ 0,00</div>
 </section>
 
-<button id="btnConnectScale" class="button primary">Conectar Balança</button>
+<button id="btnConnectScale" class="button button-primary">Conectar Balança</button>
 
 <div class="field">
 <label for="price100">Preço por 100g</label>
 <input id="price100" type="text" inputmode="decimal" value="5,00">
 </div>
 
-<button id="btnCharge" class="button cta">COBRAR</button>
+<button id="btnCharge" class="button button-cta">COBRAR</button>
 </main>
 
-<!-- modal Pagamento -->
+<!-- modal pagamento -->
 <div id="payModal" class="modal hidden" role="dialog" aria-modal="true">
 <div class="modal-content">
 <button class="close" id="closeModal">×</button>
 <h2>Escolha a forma de pagamento</h2>
 
 <div class="payment-buttons">
-<button class="pay-button" id="optDebit">Débito</button>
-<button class="pay-button" id="optCredit">Crédito</button>
-<button class="pay-button" id="optPix">PIX</button>
-<button class="pay-button cancel" id="cancelPay">Cancelar</button>
+<button class="payment-button" id="optDebit">Débito</button>
+<button class="payment-button" id="optCredit">Crédito</button>
+<button class="payment-button" id="optPix">PIX</button>
+<button class="payment-button cancel" id="cancelPay">Cancelar</button>
 </div>
 
 <div id="qrWrap" class="qr-wrap hidden"></div>
 </div>
 </div>
+
+<!-- toast -->
+<div id="toast" class="toast hidden"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
