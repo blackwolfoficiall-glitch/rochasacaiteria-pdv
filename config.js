@@ -19,5 +19,8 @@ localStorage.setItem("preco100", price);
 localStorage.setItem("unidadeNome", unit);
 
 alert("Configurações salvas!");
+
+// 🔥 ESSENCIAL: voltar para a tela principal
+window.location.href = "index.html"
 });
 });
