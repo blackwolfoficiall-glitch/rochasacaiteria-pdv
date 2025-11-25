@@ -1,26 +1,20 @@
-document.addEventListener("DOMContentLoaded", () => {
-const priceInput = document.getElementById("inputPrice");
-const nameInput = document.getElementById("inputUnit");
-const btnSave = document.getElementById("btnSave");
+document.addEventListener("DOMContentLoaded",()=>{
+const price=document.getElementById("inputPrice");
+const unit=document.getElementById("inputUnit");
+const save=document.getElementById("btnSave");
 
-// Carregar valores salvos
-const savedPrice = localStorage.getItem("preco100");
-const savedUnit = localStorage.getItem("unidadeNome");
+// carregar
+const sP=localStorage.getItem("preco100");
+const sU=localStorage.getItem("unidadeNome");
 
-if (savedPrice) priceInput.value = savedPrice;
-if (savedUnit) nameInput.value = savedUnit;
+if(sP) price.value=sP;
+if(sU) unit.value=sU;
 
-// Salvar dados
-btnSave.addEventListener("click", () => {
-const price = priceInput.value || "0"
-const unit = nameInput.value || "Unidade"
-
-localStorage.setItem("preco100", price);
-localStorage.setItem("unidadeNome", unit);
-
-alert("Configurações salvas!");
-
-// 🔥 ESSENCIAL: voltar para a tela principal
-window.location.href = "index.html"
-});
+// salvar
+save.onclick=()=>{
+ localStorage.setItem("preco100",price.value);
+ localStorage.setItem("unidadeNome",unit.value);
+ alert("Configurações salvas!");
+ window.location.href="index.html";
+};
 });
