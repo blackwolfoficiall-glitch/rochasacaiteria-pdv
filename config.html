@@ -2,50 +2,24 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Configurações</title>
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<script>
-if(localStorage.getItem("logado") !== "sim"){
-    window.location.href = "login.html";
-}
-</script>
+<div class="container">
+    <h2>Configurações</h2>
 
-<main class="app">
-    <h1 style="text-align:center;margin:8px 0 20px;">Configurações do PDV</h1>
+    <label>Preço por 100g</label>
+    <input id="inputPrice" type="text">
 
-    <div class="form">
+    <label>Nome da Unidade</label>
+    <input id="inputUnit" type="text">
 
-        <label for="precoInput">Preço por 100g</label>
-        <input id="precoInput" type="text">
+    <button id="btnSave" class="btn btn-primary">Salvar</button>
+</div>
 
-        <label for="unidadeInput" style="margin-top:12px">Nome da Unidade</label>
-        <input id="unidadeInput" type="text">
-
-        <button class="btn-save" onclick="salvar()">Salvar</button>
-
-        <a href="index.html" class="back">⬅ Voltar</a>
-    </div>
-</main>
-
-<script>
-function salvar(){
-    localStorage.setItem("preco100", document.getElementById("precoInput").value);
-    localStorage.setItem("unidade", document.getElementById("unidadeInput").value);
-
-    alert("Configurações salvas!");
-    window.location.href = "index.html";
-}
-
-window.onload = () => {
-    document.getElementById("precoInput").value = localStorage.getItem("preco100") || "5,00";
-    document.getElementById("unidadeInput").value = localStorage.getItem("unidade") || "";
-};
-</script>
+<script src="config.js"></script>
 
 </body>
 </html>
