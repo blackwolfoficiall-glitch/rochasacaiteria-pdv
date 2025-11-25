@@ -1,78 +1,91 @@
-
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rochas Açaí — PDV</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rochas Açaí — PDV</title>
 
-  <!-- stylesheet externo -->
-  <link rel="stylesheet" href="style.css">
+<!-- stylesheet externo -->
+<link rel="stylesheet" href="estilo.css">
 
-  <!-- Manifest (opcional) -->
-  <link rel="manifest" href="manifest.json">
+<!-- Manifesto (opcional) -->
+<link rel="manifest" href="manifest.json">
 
-  <!-- meta -->
-  <meta name="theme-color" content="#5A189A">
+<!-- meta -->
+<meta name="theme-color" content="#5A189A">
 </head>
 <body>
-  <div id="app">
 
-    <!-- topo: logo (arquivo logo.png) e nome da unidade -->
-    <header class="topbar">
-      <div class="logo-wrap">
-        <img src="logo.png" alt="Logo Rochas" class="logo" id="logoImg">
-      </div>
-      <div class="brand">
-        <div class="unit-name" id="unitName">Rochas Açaí — Unidade</div>
-      </div>
-      <nav class="top-buttons">
-        <button id="btnConfig" class="nav-btn">⚙️ Configurações</button>
-        <button id="btnReport" class="nav-btn">📄 Relatório</button>
-      </nav>
-    </header>
+<div id="app">
 
-    <!-- painel central -->
-    <main class="container">
-      <section class="card" aria-live="polite">
-        <div class="label">Peso</div>
-        <div id="weight" class="weight">0 g</div>
+<!-- topo: logo + nome da unidade -->
+<header class="barra-superior">
 
-        <div class="label">Total</div>
-        <div id="total" class="total">R$ 0,00</div>
-      </section>
+<div class="logo-wrapper">
+<img src="logo.png" alt="Logotipo Rochas" class="logotipo" id="logoImagem">
+</div>
 
-      <button id="btnConnectScale" class="btn btn-primary">Conectar Balança</button>
+<div class="marca">
+<div id="nome_da_unidade">Rochas Açaí — Unidade</div>
+</div>
 
-      <div class="field">
-        <label for="price100">Preço por 100g</label>
-        <input id="price100" type="text" inputmode="decimal" value="5,00" />
-      </div>
+<nav class="botoes-superiores">
+<button id="btnConfig" class="botao-nav">⚙️ Configurações</button>
+<button id="btnReport" class="botao-nav">📄 Relatório</button>
+</nav>
 
-      <button id="btnCharge" class="btn btn-cta">COBRAR</button>
-    </main>
+</header>
 
-    <!-- modal pagamento -->
-    <div id="payModal" class="modal hidden" role="dialog" aria-modal="true">
-      <div class="modal-content">
-        <button class="close" id="closeModal">&times;</button>
-        <h2>Escolha a forma de pagamento</h2>
-        <div class="pay-buttons">
-          <button class="pay-btn" data-method="debit" id="optDebit">Débito</button>
-          <button class="pay-btn" data-method="credit" id="optCredit">Crédito</button>
-          <button class="pay-btn" data-method="pix" id="optPix">PIX</button>
-          <button class="pay-btn cancel" id="cancelPay">Cancelar</button>
-        </div>
+<!-- painel central -->
+<main class="recipiente">
 
-        <div id="qrWrap" class="qr-wrap hidden"></div>
-      </div>
-    </div>
+<section class="cartao" aria-live="polite">
 
-    <!-- mensagem de toast / status -->
-    <div id="toast" class="toast hidden"></div>
-  </div>
+<div class="rotulo">Peso</div>
+<div id="weight" class="peso">0 g</div>
 
-  <!-- script principal -->
-  <script src="app.js"></script>
+<div class="rotulo">Total</div>
+<div id="total" class="total">R$ 0,00</div>
+
+</section>
+
+<button id="btnConnectScale" class="botao botao-primario">Conectar Balança</button>
+
+<div class="campo">
+<label for="price100">Preço por 100g</label>
+<input id="price100" type="text" inputmode="decimal" value="5,00">
+</div>
+
+<button id="btnCharge" class="botao botao-cta">COBRAR</button>
+
+</main>
+
+<!-- modal pagamento -->
+<div id="payModal" class="modal hidden" role="dialog" aria-modal="true">
+<div class="modal-conteudo">
+
+<button id="closeModal" class="fechar">×</button>
+
+<h2>Escolha a forma de pagamento</h2>
+
+<div class="botoes-pagamento">
+<button id="optDebit" class="botao-pagamento">Débito</button>
+<button id="optCredit" class="botao-pagamento">Crédito</button>
+<button id="optPix" class="botao-pagamento">PIX</button>
+<button id="cancelPay" class="botao-pagamento cancelar">Cancelar</button>
+</div>
+
+<div id="qrWrap" class="qr-wrap hidden"></div>
+
+</div>
+</div>
+
+<!-- toast -->
+<div id="toast" class="toast hidden"></div>
+
+</div>
+
+<!-- script principal -->
+<script src="app.js"></script>
 </body>
 </html>
