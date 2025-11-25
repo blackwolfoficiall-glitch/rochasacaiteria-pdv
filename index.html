@@ -1,41 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Rochas Açaí — PDV</title>
 
-<!-- CSS -->
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 <div id="app">
 
-<!-- TOPO -->
+<!-- Topo -->
 <header class="topbar">
 <div class="logo-wrap">
-<img src="logo.png" class="logo" alt="Logo Rochas Açaí">
+<img src="logo.png" id="logoImage" class="logo">
 </div>
 
 <div class="unit-name" id="unitName">Unidade</div>
 
 <div class="top-buttons">
-<button class="nav-btn" id="btnConfig">⚙️ Configurações</button>
-<button class="nav-btn" id="btnReport">📄 Relatório</button>
+<button id="btnConfig" class="nav-btn">⚙️ Configurações</button>
+<button id="btnReport" class="nav-btn">📄 Relatório</button>
 </div>
 </header>
 
-<!-- CONTEÚDO CENTRAL -->
-<main class="container">
+<!-- Container central -->
+<div class="container">
 
-<section class="card">
+<div class="card">
 <div class="label">Peso</div>
-<div class="weight" id="weight">0 g</div>
+<div id="weight" class="weight">0 g</div>
 
 <div class="label">Total</div>
-<div class="total" id="total">R$ 0,00</div>
-</section>
+<div id="total" class="total">R$ 0,00</div>
+</div>
 
 <button id="btnConnectScale" class="btn btn-primary">Conectar Balança</button>
 
@@ -45,32 +44,29 @@
 </div>
 
 <button id="btnCharge" class="btn btn-cta">COBRAR</button>
-</main>
 
 </div>
 
-<!-- MODAL PAGAMENTO -->
+<!-- Modal de Pagamento -->
 <div id="payModal" class="modal hidden">
 <div class="modal-content">
-<button class="close" id="closeModal">×</button>
-
+<button id="closeModal" class="close">×</button>
 <h2>Escolha a forma de pagamento</h2>
 
-<button class="pay-btn" id="optDebit">Débito</button>
-<button class="pay-btn" id="optCredit">Crédito</button>
-<button class="pay-btn" id="optPix">PIX</button>
-
-<button class="pay-btn cancel" id="cancelPay">Cancelar</button>
+<button id="optDebit" class="pay-btn">Débito</button>
+<button id="optCredit" class="pay-btn">Crédito</button>
+<button id="optPix" class="pay-btn">PIX</button>
+<button id="cancelPay" class="pay-btn cancel">Cancelar</button>
 
 <div id="qrWrap" class="qr-wrap hidden"></div>
 </div>
 </div>
 
-<!-- TOAST -->
+<!-- Toast -->
 <div id="toast" class="toast hidden"></div>
 
-<!-- APP -->
-<script src="app.js"></script>
+</div>
 
+<script src="app.js"></script>
 </body>
 </html>
