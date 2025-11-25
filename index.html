@@ -1,40 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Rochas Açaí — PDV</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rochas Açaí – PDV</title>
 
-<!-- stylesheet externo -->
 <link rel="stylesheet" href="style.css">
-
-<!-- Manifesto (opcional) -->
 <link rel="manifest" href="manifest.json">
-
 <meta name="theme-color" content="#5A189A">
 </head>
+
 <body>
 <div id="app">
 
-<!-- Topo -->
+<!-- TOPO -->
 <header class="top-bar">
-<div class="logo-wrapper">
-<img src="logo.png" alt="Logotipo Rochas Açaí" class="logo" id="logoImagem">
+<div class="logo-wrap">
+<img src="logo.png" alt="Logo Rochas" id="logoImagem" class="logo">
 </div>
 
 <div class="brand">
-<div class="unit-name" id="unitName">Unidade</div>
+<div id="unitName" class="unit-name">Unidade</div>
 </div>
 
 <nav class="top-buttons">
-<button id="btnConfig" class="nav-button">⚙️ Configurações</button>
-<button id="btnReport" class="nav-button">📄 Relatório</button>
+<button id="btnConfig" class="nav-btn">⚙️ Configurações</button>
+<button id="btnReport" class="nav-btn">📄 Relatório</button>
 </nav>
 </header>
 
-<!-- Painel -->
+<!-- CARTÃO PRINCIPAL -->
 <main class="container">
-
 <section class="card" aria-live="polite">
 <div class="label">Peso</div>
 <div id="weight" class="weight">0 g</div>
@@ -43,47 +39,38 @@
 <div id="total" class="total">R$ 0,00</div>
 </section>
 
-<button id="btnConnectScale" class="button button-primary">
-Conectar Balança
-</button>
+<button id="btnConnectScale" class="btn btn-primary">Conectar Balança</button>
 
 <div class="field">
 <label for="price100">Preço por 100g</label>
 <input id="price100" type="text" inputmode="decimal" value="5,00">
 </div>
 
-<button id="btnCharge" class="button button-cta">
-COBRAR
-</button>
-
+<button id="btnCharge" class="btn btn-cta">COBRAR</button>
 </main>
 
-<!-- Modal Pagamento -->
+<!-- MODAL DE PAGAMENTO -->
 <div id="payModal" class="modal hidden" role="dialog" aria-modal="true">
 <div class="modal-content">
-
-<button class="close" id="closeModal">×</button>
+<button id="closeModal" class="close-btn">×</button>
 
 <h2>Escolha a forma de pagamento</h2>
-
-<div class="payment-buttons">
-<button id="optDebit" class="payment-button">Débito</button>
-<button id="optCredit" class="payment-button">Crédito</button>
-<button id="optPix" class="payment-button">PIX</button>
-<button id="cancelPay" class="payment-button cancel">Cancelar</button>
+<div class="payment-options">
+<button id="optDebit" class="pay-btn">Débito</button>
+<button id="optCredit" class="pay-btn">Crédito</button>
+<button id="optPix" class="pay-btn">PIX</button>
+<button id="cancelPay" class="pay-btn cancel">Cancelar</button>
 </div>
 
 <div id="qrWrap" class="qr-wrap hidden"></div>
-
 </div>
 </div>
 
-<!-- Toast -->
+<!-- TOAST -->
 <div id="toast" class="toast hidden"></div>
 
 </div>
 
-<!-- Script principal -->
 <script src="app.js"></script>
 </body>
 </html>
