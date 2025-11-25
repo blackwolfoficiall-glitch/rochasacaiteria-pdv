@@ -27,13 +27,25 @@ const qrWrap = document.getElementById("qrWrap");
 let currentGrams = 0;
 let scaleConnected = false;
 
-// ============= CARREGAR CONFIG =============
+// ============ CARREGAR CONFIG ============
+
 const savedPrice = localStorage.getItem("preco100");
-if (savedPrice) priceInput.value = savedPrice;
+if (savedPrice && priceInput) {
+priceInput.value = savedPrice;
+}
 
+// pegar o elemento do nome da unidade
+const unitNameEl = document.getElementById("unitName");
+
+// pegar nome salvo no localStorage
 const savedUnit = localStorage.getItem("unidadeNome");
-if (savedUnit) unitNameEl.textContent = savedUnit;
 
+// aplicar no topo
+if (savedUnit && unitNameEl) {
+unitNameEl.textContent = savedUnit;
+}
+
+// recalcula o total com atraso para garantir renderização
 setTimeout(updateTotal, 150);
 
 // ============= FUNÇÕES =============
