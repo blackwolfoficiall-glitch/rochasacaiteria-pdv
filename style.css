@@ -1,100 +1,184 @@
 /* STYLE: Rochas Açaí — PDV (clean, responsivo) */
 
-/* variáveis */
 :root{
-  --roxo-escuro: #2f034d;
-  --roxo: #5A189A;
-  --roxo-claro: #7b2ebf;
-  --amarelo: #f5c400;
-  --branco: #ffffff;
-  --card-bg: rgba(255,255,255,0.04);
+--roxo-escuro: #2f034d;
+--roxo: #5A189A;
+--roxo-claro: #7b2ebf;
+--amarelo: #f5c400;
+--branco: #ffffff;
 }
 
-/* reset simples */
-*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,Arial,sans-serif}
-html,body,#app{height:100%}
+/* Reset */
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family: "Inter", Arial, sans-serif;
+}
 
-/* body/background */
 body{
-  background: linear-gradient(180deg,#2b0a48 0%, #3a0c5b 50%, #4b0d65 100%);
-  color:var(--branco);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+background: linear-gradient(180deg,#2b0a48,#3a0c5b,#4b0d65);
+color:white;
 }
 
-/* header/top */
+/* Topo */
 .topbar{
-  display:flex;
-  gap:16px;
-  align-items:center;
-  justify-content:center;
-  padding:28px 16px 0 16px;
-  position:relative;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+position:relative;
 }
-.logo-wrap{width:110px;height:56px;border-radius:6px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center}
-.logo{max-width:100%;max-height:50px;object-fit:contain}
-.brand{font-weight:700;color:var(--amarelo);font-size:28px}
-.unit-name{font-size:20px;font-weight:700;color:var(--amarelo)}
 
-/* top buttons */
-.top-buttons{position:absolute;right:18px;top:28px;display:flex;gap:8px}
+.logo-wrap{
+width:120px;
+height:55px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.logo{
+max-width:100%;
+max-height:40px;
+object-fit:contain;
+}
+
+.unit-name{
+font-size:24px;
+font-weight:700;
+color:var(--amarelo);
+}
+
+/* Buttons topo */
+.top-buttons{
+position:absolute;
+right:16px;
+display:flex;
+gap:8px;
+}
+
 .nav-btn{
-  background:rgba(255,255,255,0.08);
-  color:var(--branco);
-  border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;
-  box-shadow:0 4px 8px rgba(0,0,0,0.25);
+background:rgba(255,255,255,0.1);
+border:0;
+padding:8px 14px;
+border-radius:10px;
+color:white;
+font-weight:600;
+cursor:pointer;
 }
-.nav-btn:hover{transform:translateY(-1px);}
 
-/* main container */
+/* Conteúdo */
 .container{
-  max-width:720px;margin:32px auto;padding:8px 18px 48px 18px;text-align:center;
+max-width:720px;
+margin:0 auto;
+padding:20px;
+text-align:center;
 }
 
-/* card principal */
 .card{
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-radius:14px;padding:34px 18px 44px;box-shadow:0 10px 30px rgba(0,0,0,0.45);
-  margin-bottom:18px;
-}
-.label{opacity:0.9;font-weight:600;margin-bottom:6px}
-.weight{font-size:44px;font-weight:800;margin-bottom:6px}
-.total{font-size:40px;font-weight:800;margin-top:6px}
-
-/* fields and buttons */
-.field{max-width:520px;margin:8px auto 18px;text-align:left}
-.field label{display:block;margin-bottom:6px;font-weight:600}
-.field input[type="text"]{
-  width:100%;padding:14px;border-radius:10px;border:0;background:rgba(255,255,255,0.95);font-weight:700;color:#111;
-  font-size:18px;box-shadow:inset 0 2px 6px rgba(0,0,0,0.15)
+background:rgba(255,255,255,0.06);
+padding:32px;
+border-radius:16px;
+margin-bottom:20px;
+box-shadow:0 8px 20px rgba(0,0,0,0.4);
 }
 
-/* buttons */
-.btn{display:block;width:100%;max-width:520px;margin:14px auto;padding:16px;border-radius:12px;border:0;font-weight:800;cursor:pointer}
-.btn-primary{background:linear-gradient(180deg,var(--roxo-claro),var(--roxo));color:var(--branco);box-shadow:0 8px 18px rgba(0,0,0,0.35)}
-.btn-primary:active{transform:translateY(2px)}
-.btn-cta{background:linear-gradient(180deg,var(--amarelo),#e6b300);color:#111}
-.pay-btn{margin:8px;padding:12px 18px;border-radius:10px;border:0;background:var(--roxo);color:var(--branco);font-weight:700;cursor:pointer}
+.label{opacity:.8;font-weight:600}
+.weight{font-size:46px;font-weight:800;margin:6px 0}
+.total{font-size:40px;font-weight:800;margin:6px 0}
+
+/* Campo Preço */
+.field{
+max-width:500px;
+margin:12px auto;
+text-align:left;
+}
+
+.field label{font-weight:600}
+
+.field input{
+width:100%;
+padding:12px;
+font-size:18px;
+border-radius:10px;
+border:0;
+}
+
+/* Botões */
+.btn{
+width:100%;
+max-width:500px;
+padding:16px;
+border:0;
+border-radius:12px;
+margin:12px auto;
+cursor:pointer;
+font-weight:800;
+}
+
+.btn-primary{
+background:linear-gradient(180deg,var(--roxo-claro),var(--roxo));
+color:white;
+}
+
+.btn-cta{
+background:linear-gradient(180deg,var(--amarelo),#d4b000);
+color:#111;
+}
+
+/* Modal */
+.modal{
+position:fixed;
+left:0;right:0;top:0;bottom:0;
+background:rgba(0,0,0,.6);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.modal.hidden{display:none}
+
+.modal-content{
+background:white;
+padding:20px;
+border-radius:12px;
+width:90%;
+max-width:420px;
+}
+
+.close{
+border:0;
+background:transparent;
+font-size:22px;
+position:absolute;
+right:10px;
+top:10px;
+cursor:pointer;
+}
+
+.pay-btn{
+width:100%;
+padding:14px;
+font-weight:700;
+border:0;
+margin:8px 0;
+border-radius:10px;
+background:var(--roxo);
+color:white;
+}
+
 .pay-btn.cancel{background:#777}
 
-/* modal */
-.modal{position:fixed;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:1000}
-.modal.hidden{display:none}
-.modal-content{background:linear-gradient(180deg, #fff, #fff);color:#111;padding:20px;border-radius:12px;max-width:420px;width:94%;position:relative}
-.modal-content h2{margin-bottom:12px;text-align:center}
-.modal-content .close{position:absolute;right:8px;top:8px;border:0;background:transparent;font-size:22px;cursor:pointer}
-
-/* qr */
-.qr-wrap{margin-top:12px;text-align:center}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#222;padding:10px 16px;border-radius:8px;color:#fff;z-index:1200}
-.toast.hidden{display:none}
-
-/* responsivo */
-@media (max-width:600px){
-  .brand{display:none}
-  .unit-name{font-size:16px}
-  .logo-wrap{width:86px;height:44px}
-  .card{padding:22px}
-  .weight{font-size:36px}
-  .total{font-size:28px}
+/* Toast */
+.toast{
+position:fixed;
+left:50%;
+bottom:20px;
+transform:translateX(-50%);
+background:#222;
+padding:12px 18px;
+border-radius:8px;
 }
+
+.toast.hidden{display:none}
