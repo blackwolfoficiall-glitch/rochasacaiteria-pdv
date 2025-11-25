@@ -1,224 +1,195 @@
-// URL do backend no Render
+/* app.js – Rochas Açaí PDV */
+
+/* =======================
+   URL DO BACKEND (Render)
+========================== */
 const BACKEND = "https://rochasa-backend.onrender.com";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const weightEl = document.getElementById("weight");
-  const totalEl = document.getElementById("total");
-  const priceInput = document.getElementById("price100");
-  const btnConnectScale = document.getElementById("btnConnectScale");
-  const btnCharge = document.getElementById("btnCharge");
+/* =======================
+   ELEMENTOS DA TELA
+========================== */
+const weightEl = document.getElementById("weight");
+const totalEl = document.getElementById("total");
+const priceInput = document.getElementById("price100");
 
-  const btnConfig = document.getElementById("btnConfig");
-  const btnReport = document.getElementById("btnReport");
+const btnConnectScale = document.getElementById("btnConnectScale");
+const btnCharge = document.getElementById("btnCharge");
+const btnConfig = document.getElementById("btnConfig");
+const btnReport = document.getElementById("btnReport");
 
-  const payModal = document.getElementById("payModal");
-  const closeModal = document.getElementById("closeModal");
-  const optDebit = document.getElementById("optDebit");
-  const optCredit = document.getElementById("optCredit");
-  const optPix = document.getElementById("optPix");
-  const cancelPay = document.getElementById("cancelPay");
-  const toastEl = document.getElementById("toast");
+const payModal = document.getElementById("payModal");
+const closeModal = document.getElementById("closeModal");
+const cancelPay = document.getElementById("cancelPay");
 
-  let currentGrams = 0;
-  let scaleConnected = false;
+const optDebit = document.getElementById("optDebit");
+const optCredit = document.getElementById("optCredit");
+const optPix = document.getElementById("optPix");
 
-  // ==== TOAST ====
-  function showToast(message, isError = false) {
-    if (!toastEl) return;
-    toastEl.textContent = message;
-    toastEl.classList.remove("hidden");
-    toastEl.classList.toggle("error", !!isError);
+const qrWrap = document.getElementById("qrWrap");
+const toastEl = document.getElementById("toast");
+
+/* =======================
+   VARIÁVEIS DE ESTADO
+========================== */
+let currentGrams = 0;
+let fakeInterval = null;
+
+/* =======================
+   FORMATAÇÃO REAL (R$)
+========================== */
+function formatBRL(v) {
+    return v.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+}
+
+/* =======================
+   MOSTRAR TOAST
+========================== */
+function showToast(msg, error = false) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast show " + (error ? "error" : "");
 
     setTimeout(() => {
-      toastEl.classList.add("hidden");
-      toastEl.classList.remove("error");
-    }, 3000);
-  }
+        toastEl.className = "toast";
+    }, 2500);
+}
 
-  // ==== CÁLCULO DO TOTAL ====
-  function parsePrice100() {
+/* =======================
+   BALANÇA FAKE
+========================== */
+function startFakeScale() {
+    clearInterval(fakeInterval);
+
+    fakeInterval = setInterval(() => {
+        currentGrams = Math.floor(Math.random() * 450) + 50;
+        weightEl.textContent = currentGrams + " g";
+        updateTotal();
+    }, 1200);
+}
+
+/* =======================
+   PREÇO DIGITADO (CORRETO)
+========================== */
+function getCurrentPrice() {
     if (!priceInput) return 0;
-    const raw = priceInput.value.replace(".", "").replace(",", ".");
-    const v = parseFloat(raw);
-    return isNaN(v) ? 0 : v;
-  }
 
-  function updateTotal() {
-    const price100 = parsePrice100();
-    const total = (currentGrams / 100) * price100;
-    const formatted = total.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL"
+    const raw = (priceInput.value || "0").trim();
+
+    // "5,90" → "5.90"
+    const normalized = raw
+        .replace(/\./g, "")   // remove pontos
+        .replace(",", ".");   // troca vírgula por ponto
+
+    const n = Number(normalized);
+    return isNaN(n) ? 0 : n;
+}
+
+/* =======================
+   ATUALIZA TOTAL NA TELA
+========================== */
+function updateTotal() {
+    if (!totalEl) return;
+
+    const price = getCurrentPrice(); // valor por 100g
+    const total = (currentGrams / 100) * price;
+
+    totalEl.textContent = formatBRL(total);
+}
+
+/* Atualiza total ao digitar o preço */
+if (priceInput) {
+    priceInput.addEventListener("input", () => {
+        localStorage.setItem("price100", priceInput.value || "0");
+        updateTotal();
     });
-    totalEl.textContent = formatted;
-  }
 
-  // ==== SIMULAÇÃO DE BALANÇA (enquanto a real não entra) ====
-  function startFakeScale() {
-    if (scaleConnected) return;
-    scaleConnected = true;
-    showToast("Balança conectada (modo demonstração)");
-
-    // Esconde o botão de conectar balança após conectar
-    if (btnConnectScale) {
-      btnConnectScale.style.display = "none";
+    // carrega valor salvo
+    const saved = localStorage.getItem("price100");
+    if (saved) {
+        priceInput.value = saved;
     }
+}
 
-    // atualiza peso de tempos em tempos, só pra simular
-    setInterval(() => {
-      // simulação: de 50g a 900g
-      currentGrams = Math.floor(50 + Math.random() * 850);
-      weightEl.textContent = `${currentGrams} g`;
-      updateTotal();
-    }, 2000);
-  }
+/* =======================
+   BOTÃO CONECTAR BALANÇA
+========================== */
+if (btnConnectScale) {
+    btnConnectScale.addEventListener("click", () => {
+        startFakeScale();
+        showToast("Balança conectada!");
+    });
+}
 
-  // ==== CONTROLES DE PAGAMENTO ====
-  function openPaymentModal() {
-    if (!payModal) return;
+/* =======================
+   MODAL DE PAGAMENTO
+========================== */
+function openPaymentModal() {
     payModal.classList.remove("hidden");
-  }
+}
 
-  function closePaymentModal() {
-    if (!payModal) return;
+function closePaymentModal() {
     payModal.classList.add("hidden");
-  }
+    qrWrap.classList.add("hidden");
+}
 
-  async function createPayment(method) {
-    // Método: "debit" | "credit" | "pix"
-    const price100 = parsePrice100();
-    if (currentGrams <= 0 || price100 <= 0) {
-      showToast("Peso ou preço inválido", true);
-      return;
-    }
+if (closeModal) closeModal.onclick = closePaymentModal;
+if (cancelPay) cancelPay.onclick = closePaymentModal;
 
-    const total = (currentGrams / 100) * price100;
+/* =======================
+   BOTÃO COBRAR
+========================== */
+if (btnCharge) {
+    btnCharge.addEventListener("click", () => {
+        if (currentGrams <= 0) {
+            showToast("Coloque o produto na balança antes de cobrar", true);
+            return;
+        }
+
+        openPaymentModal();
+    });
+}
+
+/* =======================
+   MÉTODOS DE PAGAMENTO
+========================== */
+async function sendPayment(method) {
+    const description = "Venda no PDV";
+    const price = getCurrentPrice();
+    const total = (currentGrams / 100) * price;
+
+    const body = {
+        amount: Number(total.toFixed(2)),
+        description
+    };
 
     try {
-      showToast("Enviando pagamento...", false);
+        const r = await fetch(`${BACKEND}/create_payment?method=${method}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
 
-      const resp = await fetch(`${BACKEND}/create_payment?method=${encodeURIComponent(method)}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          amount: Number(total.toFixed(2)),
-          description: "Pedido PDV Rochas Açaí"
-        })
-      });
+        const json = await r.json();
 
-      if (!resp.ok) {
-        const errTxt = await resp.text();
-        console.error("Erro na resposta:", errTxt);
-        showToast("Erro ao criar pagamento", true);
-        return;
-      }
+        if (!r.ok) {
+            showToast("Erro ao gerar pagamento", true);
+            return;
+        }
 
-      const data = await resp.json();
-      console.log("Resposta Mercado Pago:", data);
+        if (method === "pix") {
+            qrWrap.classList.remove("hidden");
+            qrWrap.innerHTML = `<img src="${json.point_of_interaction.transaction_data.qr_code_base64}" />`;
+        } else {
+            showToast("Pagamento de cartão criado. Conclua na maquininha.");
+        }
 
-      if (method === "pix") {
-        showToast("PIX criado. Veja o QR Code na maquininha ou no app.", false);
-        // aqui daria pra exibir qrcode se o backend devolvesse a imagem/base64
-      } else {
-        showToast("Pagamento de cartão criado. Conclua na maquininha.", false);
-      }
-
-      closePaymentModal();
-    } catch (err) {
-      console.error("Erro de rede:", err);
-      showToast("Erro de rede ao criar pagamento", true);
+    } catch (e) {
+        showToast("Falha ao conectar com servidor", true);
     }
-  }
-
-  // ==== SENHA CONFIG E RELATÓRIO ====
-  function askPasswordAndGo(path) {
-    const pass = prompt("Digite a senha (1901):");
-    if (pass === "1901") {
-      window.location.href = path;
-    } else if (pass !== null) {
-      showToast("Senha incorreta", true);
-    }
-  }
-
-  // ==== EVENTOS ====
-
-  // Botão conectar balança
-  if (btnConnectScale) {
-    btnConnectScale.addEventListener("click", () => {
-      // futuramente aqui entra a balança real via WebSerial/USB
-      startFakeScale();
-    });
-  }
-
-  // --------- Função para pegar o preço atual do input ----------
-function getCurrentPrice() {
-  if (!priceInput) return 0;
-
-  const raw = (priceInput.value || "0").trim();
-
-  // converte "5,90" -> 5.90
-  const normalized = raw
-    .replace(/\./g, "")   // tira pontos de milhar
-    .replace(",", ".");   // troca vírgula por ponto
-
-  const n = Number(normalized);
-  return isNaN(n) ? 0 : n;
 }
 
-// --------- Atualiza o total na tela ----------
-function updateTotal() {
-  if (!totalEl) return;
-
-  const price = getCurrentPrice();     // preço por 100g
-  const total = (currentGrams / 100) * price;
-
-  totalEl.textContent = formatBRL(total);
-}
-
-// Atualizar total ao mudar preço
-if (priceInput) {
-  priceInput.addEventListener("input", () => {
-    // salva o preço novo
-    localStorage.setItem("price100", priceInput.value || "0");
-    // recalcula o total
-    updateTotal();
-  });
-}
-  // Botão COBRAR
-  if (btnCharge) {
-    btnCharge.addEventListener("click", () => {
-      if (currentGrams <= 0) {
-        showToast("Coloque o produto na balança antes de cobrar", true);
-        return;
-      }
-      openPaymentModal();
-    });
-  }
-
-  // Modal de pagamento
-  if (closeModal) {
-    closeModal.addEventListener("click", closePaymentModal);
-  }
-  if (cancelPay) {
-    cancelPay.addEventListener("click", closePaymentModal);
-  }
-  if (optDebit) {
-    optDebit.addEventListener("click", () => createPayment("debit"));
-  }
-  if (optCredit) {
-    optCredit.addEventListener("click", () => createPayment("credit"));
-  }
-  if (optPix) {
-    optPix.addEventListener("click", () => createPayment("pix"));
-  }
-
-  // Botões de Configuração e Relatório
-  if (btnConfig) {
-    btnConfig.addEventListener("click", () => askPasswordAndGo("config.html"));
-  }
-  if (btnReport) {
-    btnReport.addEventListener("click", () => askPasswordAndGo("relatorio.html"));
-  }
-});
+if (optPix) optPix.onclick = () => sendPayment("pix");
+if (optDebit) optDebit.onclick = () => sendPayment("debit");
+if (optCredit) optCredit.onclick = () => sendPayment("credit");
