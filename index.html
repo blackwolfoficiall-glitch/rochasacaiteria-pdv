@@ -16,14 +16,14 @@
 <body>
 <div id="app">
 
-<!-- topo -->
+<!-- Topo -->
 <header class="top-bar">
 <div class="logo-wrapper">
-<img src="logo.png" alt="Logotipo Rochas" class="logo" id="logoImagem">
+<img src="logo.png" alt="Logotipo Rochas Açaí" class="logo" id="logoImagem">
 </div>
 
 <div class="brand">
-<div class="unit-name" id="nome_da_unidade">Rochas Açaí — Unidade</div>
+<div class="unit-name" id="unitName">Unidade</div>
 </div>
 
 <nav class="top-buttons">
@@ -32,9 +32,10 @@
 </nav>
 </header>
 
-<!-- painel central -->
+<!-- Painel -->
 <main class="container">
-<section class="card">
+
+<section class="card" aria-live="polite">
 <div class="label">Peso</div>
 <div id="weight" class="weight">0 g</div>
 
@@ -42,37 +43,47 @@
 <div id="total" class="total">R$ 0,00</div>
 </section>
 
-<button id="btnConnectScale" class="button button-primary">Conectar Balança</button>
+<button id="btnConnectScale" class="button button-primary">
+Conectar Balança
+</button>
 
 <div class="field">
 <label for="price100">Preço por 100g</label>
 <input id="price100" type="text" inputmode="decimal" value="5,00">
 </div>
 
-<button id="btnCharge" class="button button-cta">COBRAR</button>
+<button id="btnCharge" class="button button-cta">
+COBRAR
+</button>
+
 </main>
 
-<!-- modal pagamento -->
+<!-- Modal Pagamento -->
 <div id="payModal" class="modal hidden" role="dialog" aria-modal="true">
 <div class="modal-content">
+
 <button class="close" id="closeModal">×</button>
+
 <h2>Escolha a forma de pagamento</h2>
 
 <div class="payment-buttons">
-<button class="payment-button" id="optDebit">Débito</button>
-<button class="payment-button" id="optCredit">Crédito</button>
-<button class="payment-button" id="optPix">PIX</button>
-<button class="payment-button cancel" id="cancelPay">Cancelar</button>
+<button id="optDebit" class="payment-button">Débito</button>
+<button id="optCredit" class="payment-button">Crédito</button>
+<button id="optPix" class="payment-button">PIX</button>
+<button id="cancelPay" class="payment-button cancel">Cancelar</button>
 </div>
 
 <div id="qrWrap" class="qr-wrap hidden"></div>
+
 </div>
 </div>
 
-<!-- toast -->
+<!-- Toast -->
 <div id="toast" class="toast hidden"></div>
+
 </div>
 
+<!-- Script principal -->
 <script src="app.js"></script>
 </body>
 </html>
