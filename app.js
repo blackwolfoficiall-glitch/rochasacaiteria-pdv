@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ================= ELEMENTOS =================
     const weightEl = document.getElementById("weight");
     const totalEl = document.getElementById("total");
     const priceInput = document.getElementById("price100");
@@ -19,35 +18,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const optPix = document.getElementById("optPix");
     const toastEl = document.getElementById("toast");
 
-    let currentGrams = 0;
-    let scaleConnected = false;
+    let currentGrams = 0, scaleConnected = false;
 
-
-    // ================= TOAST =================
+    // ===============================
+    // TOAST
+    // ===============================
     function showToast(msg, err = false) {
         toastEl.textContent = msg;
         toastEl.classList.remove("hidden");
         toastEl.style.background = err ? "#b00000" : "#222";
-
         setTimeout(() => toastEl.classList.add("hidden"), 2500);
     }
 
-
-    // ================= PREÇO E TOTAL =================
+    // ===============================
+    // CÁLCULO
+    // ===============================
     function parsePrice() {
         return parseFloat(priceInput.value.replace(",", "."));
     }
 
     function updateTotal() {
         const t = (currentGrams / 100) * parsePrice();
-        totalEl.textContent = t.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL"
-        });
+        totalEl.textContent = t.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     }
 
-
-    // ================= CONFIG SALVA =================
+    // ===============================
+    // CONFIG SALVA
+    // ===============================
     const savedPrice = localStorage.getItem("preco100");
     if (savedPrice) priceInput.value = savedPrice;
 
@@ -56,14 +53,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(updateTotal, 200);
 
-
-    // ================= BALANÇA FAKE =================
+    // ===============================
+    // BALANÇA FAKE
+    // ===============================
     function startFake() {
         if (scaleConnected) return;
-
         scaleConnected = true;
         btnConnect.style.display = "none";
-
         showToast("Balança conectada");
 
         setInterval(() => {
@@ -74,11 +70,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     btnConnect.onclick = startFake;
-
-
-    // ================= COBRAR =================
     priceInput.oninput = updateTotal;
 
+    // ===============================
+    // PAGAMENTO — STONE NATIVO
+    // ===============================
+    function stonePay(valor) {
+
+        const centavos = Math.round(valor * 100);
+
+        showToast("Abrindo pagamento na Stone...");
+
+        try {
+            // Deep Link padrão dos terminais Stone P2
+            window.location.href = "stone://payment?amount=" + centavos;
+        } catch (e) {
+            console.log(e);
+            showToast("Erro ao abrir pagamento Stone", true);
+        }
+
+        payModal.classList.add("hidden");
+    }
+
+    // ===============================
+    // ABRIR MODAL DE PAGAMENTO
+    // ===============================
     btnCharge.onclick = () => {
         if (currentGrams <= 0) {
             showToast("Coloque algo na balança", true);
@@ -90,24 +106,21 @@ document.addEventListener("DOMContentLoaded", () => {
     closeModal.onclick = () => payModal.classList.add("hidden");
     cancelPay.onclick = () => payModal.classList.add("hidden");
 
+    // BOTÕES — todos usam STONE
+    optDebit.onclick = () => stonePay(parsePrice() * currentGrams / 100);
+    optCredit.onclick = () => stonePay(parsePrice() * currentGrams / 100);
+    optPix.onclick = () => stonePay(parsePrice() * currentGrams / 100);
 
-    // ================= PAGAMENTOS (DEMO) =================
-    optDebit.onclick = () => { showToast("Pagamento débito enviado"); payModal.classList.add("hidden"); };
-    optCredit.onclick = () => { showToast("Pagamento crédito enviado"); payModal.classList.add("hidden"); };
-    optPix.onclick = () => { showToast("PIX gerado"); payModal.classList.add("hidden"); };
-
-
-    // ================= SENHA DE ACESSO =================
-    function senha(path) {
-        const pass = prompt("Digite a senha (1901):");
-        if (pass === "1901") {
-            window.location.href = path;
-        } else {
-            showToast("Senha incorreta", true);
-        }
+    // ===============================
+    // Páginas protegidas (senha 1901)
+    // ===============================
+    function askPassword(path) {
+        const p = prompt("Digite a senha (1901):");
+        if (p === "1901") window.location.href = path;
+        else showToast("Senha incorreta", true);
     }
 
-    btnConfig.onclick = () => senha("config.html");
-    btnReport.onclick = () => senha("relatorio.html");
+    btnConfig.onclick = () => askPassword("config.html");
+    btnReport.onclick = () => askPassword("relatorio.html");
 
-});
+})
