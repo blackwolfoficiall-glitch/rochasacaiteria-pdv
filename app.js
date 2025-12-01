@@ -5,9 +5,6 @@ const API_URL = "https://rochas-pdv-backend.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // =========================================================
-    // ELEMENTOS
-    // =========================================================
     const weightEl = document.getElementById("weight");
     const totalEl = document.getElementById("total");
     const priceInput = document.getElementById("price100");
@@ -32,22 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentGrams = 0;
     let scaleConnected = false;
 
-
-    // =========================================================
-    // TOAST
-    // =========================================================
     function showToast(msg, isError = false) {
         toastEl.textContent = msg;
         toastEl.classList.remove("hidden");
         toastEl.style.background = isError ? "#b00000" : "#222";
-
         setTimeout(() => toastEl.classList.add("hidden"), 2500);
     }
 
-
-    // =========================================================
-    // CARREGAR CONFIGURAÇÕES
-    // =========================================================
     const savedPrice = localStorage.getItem("preco100");
     if (savedPrice) priceInput.value = savedPrice;
 
@@ -56,10 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(updateTotal, 100);
 
-
-    // =========================================================
-    // CALC TOTAL
-    // =========================================================
     function parsePrice() {
         return parseFloat(priceInput.value.replace(",", "."));
     }
@@ -72,10 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-    // =========================================================
-    // BALANÇA FAKE
-    // =========================================================
     function startFakeScale() {
         if (scaleConnected) return;
 
@@ -90,10 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     }
 
-
-    // =========================================================
-    // MODAL
-    // =========================================================
     function openPaymentModal() {
         payModal.classList.remove("hidden");
     }
@@ -102,10 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
         payModal.classList.add("hidden");
     }
 
-
-    // =========================================================
-    // PAGAMENTO (CORRIGIDO!)
-// =========================================================
     async function sendPayment(method) {
         const price = parsePrice();
         if (price <= 0 || currentGrams <= 0) {
@@ -118,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast("Enviando pagamento...");
 
         try {
-            const res = await fetch(`${API_URL}/create_payment`, {   //  <<<<<< CORRETO
+            const res = await fetch(`${API_URL}/create-payment`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -144,10 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
-    // =========================================================
-    // SENHA
-    // =========================================================
     function askPasswordAndGo(path) {
         const p = prompt("Digite a senha (1901):");
         if (p === "1901") {
@@ -157,10 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
-    // =========================================================
-    // EVENTOS
-    // =========================================================
     btnConnect.onclick = startFakeScale;
     priceInput.oninput = updateTotal;
 
