@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
-    // FUNÇÃO TOAST
+    // TOAST
     // =========================================================
     function showToast(msg, isError = false) {
         toastEl.textContent = msg;
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
-    // SALVAR / CARREGAR CONFIGURAÇÕES LOCAIS
+    // CARREGAR CONFIGURAÇÕES
     // =========================================================
     const savedPrice = localStorage.getItem("preco100");
     if (savedPrice) priceInput.value = savedPrice;
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
-    // CÁLCULO DO TOTAL
+    // CALC TOTAL
     // =========================================================
     function parsePrice() {
         return parseFloat(priceInput.value.replace(",", "."));
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
-    // MODAL DE PAGAMENTO
+    // MODAL
     // =========================================================
     function openPaymentModal() {
         payModal.classList.remove("hidden");
@@ -104,8 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
-    // REQUISIÇÃO DE PAGAMENTO (BACKEND)
-    // =========================================================
+    // PAGAMENTO (CORRIGIDO!)
+// =========================================================
     async function sendPayment(method) {
         const price = parsePrice();
         if (price <= 0 || currentGrams <= 0) {
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast("Enviando pagamento...");
 
         try {
-            const res = await fetch(`${API_URL}/create-payment`, {
+            const res = await fetch(`${API_URL}/create_payment`, {   //  <<<<<< CORRETO
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // =========================================================
-    // SENHA PARA CONFIGURAÇÃO E RELATÓRIO
+    // SENHA
     // =========================================================
     function askPasswordAndGo(path) {
         const p = prompt("Digite a senha (1901):");
@@ -161,9 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================================================
     // EVENTOS
     // =========================================================
-
     btnConnect.onclick = startFakeScale;
-
     priceInput.oninput = updateTotal;
 
     btnCharge.onclick = () => {
