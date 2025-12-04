@@ -1,5 +1,5 @@
 // ===============================================
-// 🔗 URL DO BACKEND (Render) — CORRETA
+// 🔗 URL DO BACKEND (Render)
 // ===============================================
 const API_URL = "https://v-backend.onrender.com";
 
