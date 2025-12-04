@@ -90,12 +90,13 @@ const total = Number(((currentGrams / 100) * price).toFixed(2));
 showToast("Enviando pagamento...");
 
 try {
-const res = await fetch(`${API_URL}/create-payment`, {
+// CORRIGIDO: agora chama /create_payment
+const res = await fetch(`${API_URL}/create_payment?method=${method}`, {
 method: "POST",
 headers: { "Content-Type": "application/json" },
 body: JSON.stringify({
-method,
-amount: total
+amount: total,
+description: "Pedido PDV Rochas Açaí"
 })
 });
 
@@ -107,12 +108,12 @@ showToast("Erro no pagamento!", true);
 return;
 }
 
-showToast("Pagamento enviado! Finalize na maquininha.");
+showToast("Pagamento enviado! Verifique na maquininha.");
 closePaymentModal();
 
 } catch (err) {
 console.error(err);
-showToast("Falha ao conectar com servidor", true);
+showToast("Falha ao conectar com o servidor", true);
 }
 }
 
