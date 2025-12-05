@@ -1,7 +1,6 @@
 // ===============================================
-// 🔗 URL DO BACKEND (Render)
+// 🔗 PDV Rochas Açaí — Integração InfinitePay Android
 // ===============================================
-const API_URL = "https://v-backend.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -29,6 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentGrams = 0;
     let scaleConnected = false;
 
+    // ===============================================
+    // FUNÇÃO: TOAST
+    // ===============================================
     function showToast(msg, isError = false) {
         toastEl.textContent = msg;
         toastEl.classList.remove("hidden");
@@ -36,6 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toastEl.classList.add("hidden"), 2500);
     }
 
+    // ===============================================
+    // CARREGAR CONFIGURAÇÕES
+    // ===============================================
     const savedPrice = localStorage.getItem("preco100");
     if (savedPrice) priceInput.value = savedPrice;
 
@@ -44,6 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(updateTotal, 100);
 
+    // ===============================================
+    // CÁLCULO DO TOTAL
+    // ===============================================
     function parsePrice() {
         return parseFloat(priceInput.value.replace(",", "."));
     }
@@ -56,6 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // ===============================================
+    // BALANÇA SIMULADA
+    // ===============================================
     function startFakeScale() {
         if (scaleConnected) return;
 
@@ -70,6 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     }
 
+    // ===============================================
+    // MODAL DE PAGAMENTO
+    // ===============================================
     function openPaymentModal() {
         payModal.classList.remove("hidden");
     }
@@ -78,52 +92,52 @@ document.addEventListener("DOMContentLoaded", () => {
         payModal.classList.add("hidden");
     }
 
-    async function sendPayment(method) {
-        const price = parsePrice();
-        if (price <= 0 || currentGrams <= 0) {
-            showToast("Peso ou preço inválido!", true);
-            return;
-        }
+    // ===============================================
+    // 🔥 INFINITE PAY — TAP TO PAY (ANDROID)
+    // ===============================================
+    function openInfinitePay(amount) {
+        const valorCentavos = Math.round(amount * 100);
 
-        const total = Number(((currentGrams / 100) * price).toFixed(2));
+        const url = `infinitepay://payment?amount=${valorCentavos}&description=PDV%20Rochas%20Acai`;
 
-        showToast("Enviando pagamento...");
+        console.log("Abrindo InfinitePay:", url);
 
-        try {
-            const res = await fetch(`${API_URL}/create_payment?method=${method}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    amount: total,
-                    description: "Pedido PDV Rochas Açaí"
-                })
-            });
-
-            const data = await res.json();
-            console.log("RESPOSTA PAGAMENTO:", data);
-
-            if (!res.ok) {
-                showToast("Erro no pagamento!", true);
-                return;
-            }
-
-            showToast("Pagamento enviado! Verifique na maquininha.");
-            closePaymentModal();
-
-        } catch (err) {
-            console.error(err);
-            showToast("Falha ao conectar com o servidor", true);
-        }
+        // Abre o app InfinitePay automaticamente
+        window.location.href = url;
     }
 
-    function askPasswordAndGo(path) {
-        const p = prompt("Digite a senha (1901):");
-        if (p === "1901") {
-            window.location.href = path;
-        } else if (p !== null) {
-            showToast("Senha incorreta", true);
-        }
+    // ===============================================
+    // EVENTOS DE PAGAMENTO
+    // ===============================================
+    optDebit.onclick = () => {
+        const valor = getTotalAsNumber();
+        openInfinitePay(valor);
+        closePaymentModal();
+    };
+
+    optCredit.onclick = () => {
+        const valor = getTotalAsNumber();
+        openInfinitePay(valor);
+        closePaymentModal();
+    };
+
+    optPix.onclick = () => {
+        showToast("PIX não está integrado ainda.", true);
+    };
+
+    function getTotalAsNumber() {
+        return Number(
+            totalEl.textContent
+                .replace("R$", "")
+                .replace(".", "")
+                .replace(",", ".")
+                .trim()
+        );
     }
+
+    // ===============================================
+    // EVENTOS GERAIS DA TELA
+    // ===============================================
 
     btnConnect.onclick = startFakeScale;
     priceInput.oninput = updateTotal;
@@ -139,10 +153,18 @@ document.addEventListener("DOMContentLoaded", () => {
     closeModal.onclick = closePaymentModal;
     cancelPay.onclick = closePaymentModal;
 
-    optDebit.onclick = () => sendPayment("debit");
-    optCredit.onclick = () => sendPayment("credit");
-    optPix.onclick = () => sendPayment("pix");
-
     btnConfig.onclick = () => askPasswordAndGo("config.html");
     btnReport.onclick = () => askPasswordAndGo("relatorio.html");
+
+    // ===============================================
+    // SENHA (CONFIG E RELATÓRIO)
+    // ===============================================
+    function askPasswordAndGo(path) {
+        const p = prompt("Digite a senha (1901):");
+        if (p === "1901") {
+            window.location.href = path;
+        } else if (p !== null) {
+            showToast("Senha incorreta", true);
+        }
+    }
 });
