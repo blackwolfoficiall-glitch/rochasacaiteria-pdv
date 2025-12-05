@@ -1,7 +1,30 @@
 // ===============================================
-// 🔗 PDV Rochas Açaí — Integração InfinitePay Android
+// 🔗 Integração direta com InfinitePay (Android)
 // ===============================================
 
+// Não há backend. Todo pagamento abre direto o app da InfinitePay no tablet Android.
+
+// -----------------------------------------------
+// Função para abrir o app da InfinitePay via deep link
+// -----------------------------------------------
+function openInfinitePay(amount, method) {
+
+    // InfinitePay recebe em centavos
+    const cents = Math.round(amount * 100);
+
+    // Monta o link deep link oficial
+    const url = `infinitepay://payment?amount=${cents}&description=PDV%20Rochas%20Acai`;
+
+    console.log("Abrindo InfinitePay:", url);
+
+    // Abre diretamente o app InfinitePay
+    window.location.href = url;
+}
+
+
+// ===============================================
+// INICIALIZAÇÃO DO PDV
+// ===============================================
 document.addEventListener("DOMContentLoaded", () => {
 
     const weightEl = document.getElementById("weight");
@@ -28,9 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentGrams = 0;
     let scaleConnected = false;
 
-    // ===============================================
-    // FUNÇÃO: TOAST
-    // ===============================================
+
+    // Toast
     function showToast(msg, isError = false) {
         toastEl.textContent = msg;
         toastEl.classList.remove("hidden");
@@ -38,20 +60,16 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toastEl.classList.add("hidden"), 2500);
     }
 
-    // ===============================================
-    // CARREGAR CONFIGURAÇÕES
-    // ===============================================
+
+    // Carregar configurações salvas
     const savedPrice = localStorage.getItem("preco100");
     if (savedPrice) priceInput.value = savedPrice;
 
     const savedUnit = localStorage.getItem("unidadeNome");
     if (savedUnit) unitNameEl.textContent = savedUnit;
 
-    setTimeout(updateTotal, 100);
 
-    // ===============================================
-    // CÁLCULO DO TOTAL
-    // ===============================================
+    // Cálculo do total
     function parsePrice() {
         return parseFloat(priceInput.value.replace(",", "."));
     }
@@ -64,9 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ===============================================
-    // BALANÇA SIMULADA
-    // ===============================================
+
+    // Simulação de balança
     function startFakeScale() {
         if (scaleConnected) return;
 
@@ -81,9 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     }
 
-    // ===============================================
-    // MODAL DE PAGAMENTO
-    // ===============================================
+
+    // Modal pagamento
     function openPaymentModal() {
         payModal.classList.remove("hidden");
     }
@@ -92,53 +108,26 @@ document.addEventListener("DOMContentLoaded", () => {
         payModal.classList.add("hidden");
     }
 
-    // ===============================================
-    // 🔥 INFINITE PAY — TAP TO PAY (ANDROID)
-    // ===============================================
-    function openInfinitePay(amount) {
-        const valorCentavos = Math.round(amount * 100);
 
-        const url = `infinitepay://payment?amount=${valorCentavos}&description=PDV%20Rochas%20Acai`;
+    // Quando escolher forma de pagamento
+    function processPayment(method) {
+        const price = parsePrice();
+        if (price <= 0 || currentGrams <= 0) {
+            showToast("Peso ou preço inválido!", true);
+            return;
+        }
 
-        console.log("Abrindo InfinitePay:", url);
+        const total = Number(((currentGrams / 100) * price).toFixed(2));
 
-        // Abre o app InfinitePay automaticamente
-        window.location.href = url;
+        closePaymentModal();
+        showToast("Abrindo InfinitePay...");
+
+        // Chama deep link
+        openInfinitePay(total, method);
     }
 
-    // ===============================================
-    // EVENTOS DE PAGAMENTO
-    // ===============================================
-    optDebit.onclick = () => {
-        const valor = getTotalAsNumber();
-        openInfinitePay(valor);
-        closePaymentModal();
-    };
 
-    optCredit.onclick = () => {
-        const valor = getTotalAsNumber();
-        openInfinitePay(valor);
-        closePaymentModal();
-    };
-
-    optPix.onclick = () => {
-        showToast("PIX não está integrado ainda.", true);
-    };
-
-    function getTotalAsNumber() {
-        return Number(
-            totalEl.textContent
-                .replace("R$", "")
-                .replace(".", "")
-                .replace(",", ".")
-                .trim()
-        );
-    }
-
-    // ===============================================
-    // EVENTOS GERAIS DA TELA
-    // ===============================================
-
+    // Eventos
     btnConnect.onclick = startFakeScale;
     priceInput.oninput = updateTotal;
 
@@ -153,18 +142,18 @@ document.addEventListener("DOMContentLoaded", () => {
     closeModal.onclick = closePaymentModal;
     cancelPay.onclick = closePaymentModal;
 
+    optDebit.onclick = () => processPayment("debit");
+    optCredit.onclick = () => processPayment("credit");
+    optPix.onclick = () => processPayment("pix");
+
     btnConfig.onclick = () => askPasswordAndGo("config.html");
     btnReport.onclick = () => askPasswordAndGo("relatorio.html");
 
-    // ===============================================
-    // SENHA (CONFIG E RELATÓRIO)
-    // ===============================================
+
     function askPasswordAndGo(path) {
         const p = prompt("Digite a senha (1901):");
-        if (p === "1901") {
-            window.location.href = path;
-        } else if (p !== null) {
-            showToast("Senha incorreta", true);
-        }
+        if (p === "1901") window.location.href = path;
+        else if (p !== null) showToast("Senha incorreta", true);
     }
+
 });
