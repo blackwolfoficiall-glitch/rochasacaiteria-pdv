@@ -5,6 +5,7 @@ const API_URL = "https://rochas-pdv-backend.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    // ELEMENTOS
     const weightEl = document.getElementById("weight");
     const totalEl = document.getElementById("total");
     const priceInput = document.getElementById("price100");
@@ -29,11 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentGrams = 0;
     let scaleConnected = false;
 
-    // Detectar iPhone para usar Mercado Pago
-    const IS_IPHONE = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    // Detectar Android para usar InfinitePay
-    const IS_ANDROID = /Android/i.test(navigator.userAgent);
+    // Detectar iPhone ou Android
+    const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     function showToast(msg, isError = false) {
         toastEl.textContent = msg;
@@ -42,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toastEl.classList.add("hidden"), 2500);
     }
 
+    // PREÇO E UNIDADE
     const savedPrice = localStorage.getItem("preco100");
     if (savedPrice) priceInput.value = savedPrice;
 
@@ -62,8 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // BALANÇA FAKE (DEMONSTRAÇÃO)
     function startFakeScale() {
         if (scaleConnected) return;
+
         scaleConnected = true;
         btnConnect.style.display = "none";
         showToast("Balança conectada (simulação)");
@@ -75,44 +76,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     }
 
-    function openPaymentModal() {
-        payModal.classList.remove("hidden");
-    }
+    // MODAL
+    function openPaymentModal() { payModal.classList.remove("hidden"); }
+    function closePaymentModal() { payModal.classList.add("hidden"); }
 
-    function closePaymentModal() {
-        payModal.classList.add("hidden");
-    }
-
-
-    // ============================================================
-    // 🔵 FUNÇÃO PARA CHAMAR O MERCADO PAGO (iPhone)
-    // ============================================================
-    function openMercadoPagoTapToPay(amount) {
+    // ABRIR MERCADO PAGO TAP TO PAY
+    function openMercadoPago(amount) {
         const link = `mercadopago://payment/point?amount=${amount}`;
 
-        showToast("Abrindo Mercado Pago...", false);
+        showToast("Abrindo Mercado Pago…");
 
+        // Abre o app Mercado Pago
         window.location.href = link;
     }
 
-
-    // ============================================================
-    // 🟢 FUNÇÃO PARA CHAMAR INFINITEPAY (Android)
-    // ============================================================
-    function openInfinitePay(amount) {
-        const link = `infinitepay://payment?amount=${amount}`;
-
-        showToast("Abrindo InfinitePay...", false);
-
-        window.location.href = link;
-    }
-
-
-    // ============================================================
-    // 🟣 ENVIAR PAGAMENTO
-    // ============================================================
+    // ENVIO DE PAGAMENTO
     async function sendPayment(method) {
-
         const price = parsePrice();
         if (price <= 0 || currentGrams <= 0) {
             showToast("Peso ou preço inválido!", true);
@@ -121,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const total = Number(((currentGrams / 100) * price).toFixed(2));
 
-        // PIX precisa backend
+        // PIX → chama backend
         if (method === "pix") {
             try {
                 showToast("Gerando PIX...");
@@ -135,44 +114,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 const data = await res.json();
-                console.log("PIX:", data);
-
                 if (!res.ok) return showToast("Erro ao gerar PIX", true);
 
-                // Mostrar QR CODE
                 const qr = data.point_of_interaction.transaction_data.qr_code_base64;
 
                 const qrWrap = document.getElementById("qrWrap");
                 qrWrap.classList.remove("hidden");
                 qrWrap.innerHTML = `<img src="${qr}" style="width:250px">`;
 
-            } catch (e) {
-                showToast("Erro ao gerar PIX", true);
+            } catch (err) {
+                showToast("Erro ao gerar PIX!", true);
             }
 
             return;
         }
 
-        // ======================================================
-        // 🔥 DEBITO / CRÉDITO → abrir app nativo conforme dispositivo
-        // ======================================================
-        if (IS_IPHONE) {
-            openMercadoPagoTapToPay(total);
-            closePaymentModal();
-            return;
-        }
-
-        if (IS_ANDROID) {
-            openInfinitePay(total);
-            closePaymentModal();
-            return;
-        }
-
-        showToast("Dispositivo não suportado!", true);
+        // CARTÃO → abrir Mercado Pago
+        openMercadoPago(total);
+        closePaymentModal();
     }
 
-
-
+    // EVENTOS
     btnConnect.onclick = startFakeScale;
     priceInput.oninput = updateTotal;
 
