@@ -1,30 +1,8 @@
 // ===============================================
-// 🔗 Integração direta com InfinitePay (Android)
+// 🔗 URL DO BACKEND (Render)
 // ===============================================
+const API_URL = "https://rochas-pdv-backend.onrender.com";
 
-// Não há backend. Todo pagamento abre direto o app da InfinitePay no tablet Android.
-
-// -----------------------------------------------
-// Função para abrir o app da InfinitePay via deep link
-// -----------------------------------------------
-function openInfinitePay(amount, method) {
-
-    // InfinitePay recebe em centavos
-    const cents = Math.round(amount * 100);
-
-    // Monta o link deep link oficial
-    const url = `infinitepay://payment?amount=${cents}&description=PDV%20Rochas%20Acai`;
-
-    console.log("Abrindo InfinitePay:", url);
-
-    // Abre diretamente o app InfinitePay
-    window.location.href = url;
-}
-
-
-// ===============================================
-// INICIALIZAÇÃO DO PDV
-// ===============================================
 document.addEventListener("DOMContentLoaded", () => {
 
     const weightEl = document.getElementById("weight");
@@ -51,8 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentGrams = 0;
     let scaleConnected = false;
 
+    // Detectar iPhone para usar Mercado Pago
+    const IS_IPHONE = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    // Toast
+    // Detectar Android para usar InfinitePay
+    const IS_ANDROID = /Android/i.test(navigator.userAgent);
+
     function showToast(msg, isError = false) {
         toastEl.textContent = msg;
         toastEl.classList.remove("hidden");
@@ -60,16 +42,14 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toastEl.classList.add("hidden"), 2500);
     }
 
-
-    // Carregar configurações salvas
     const savedPrice = localStorage.getItem("preco100");
     if (savedPrice) priceInput.value = savedPrice;
 
     const savedUnit = localStorage.getItem("unidadeNome");
     if (savedUnit) unitNameEl.textContent = savedUnit;
 
+    setTimeout(updateTotal, 100);
 
-    // Cálculo do total
     function parsePrice() {
         return parseFloat(priceInput.value.replace(",", "."));
     }
@@ -82,11 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-    // Simulação de balança
     function startFakeScale() {
         if (scaleConnected) return;
-
         scaleConnected = true;
         btnConnect.style.display = "none";
         showToast("Balança conectada (simulação)");
@@ -98,8 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     }
 
-
-    // Modal pagamento
     function openPaymentModal() {
         payModal.classList.remove("hidden");
     }
@@ -109,8 +84,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Quando escolher forma de pagamento
-    function processPayment(method) {
+    // ============================================================
+    // 🔵 FUNÇÃO PARA CHAMAR O MERCADO PAGO (iPhone)
+    // ============================================================
+    function openMercadoPagoTapToPay(amount) {
+        const link = `mercadopago://payment/point?amount=${amount}`;
+
+        showToast("Abrindo Mercado Pago...", false);
+
+        window.location.href = link;
+    }
+
+
+    // ============================================================
+    // 🟢 FUNÇÃO PARA CHAMAR INFINITEPAY (Android)
+    // ============================================================
+    function openInfinitePay(amount) {
+        const link = `infinitepay://payment?amount=${amount}`;
+
+        showToast("Abrindo InfinitePay...", false);
+
+        window.location.href = link;
+    }
+
+
+    // ============================================================
+    // 🟣 ENVIAR PAGAMENTO
+    // ============================================================
+    async function sendPayment(method) {
+
         const price = parsePrice();
         if (price <= 0 || currentGrams <= 0) {
             showToast("Peso ou preço inválido!", true);
@@ -119,15 +121,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const total = Number(((currentGrams / 100) * price).toFixed(2));
 
-        closePaymentModal();
-        showToast("Abrindo InfinitePay...");
+        // PIX precisa backend
+        if (method === "pix") {
+            try {
+                showToast("Gerando PIX...");
+                const res = await fetch(`${API_URL}/create_payment?method=pix`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        amount: total,
+                        description: "Pedido PDV Rochas Açaí"
+                    })
+                });
 
-        // Chama deep link
-        openInfinitePay(total, method);
+                const data = await res.json();
+                console.log("PIX:", data);
+
+                if (!res.ok) return showToast("Erro ao gerar PIX", true);
+
+                // Mostrar QR CODE
+                const qr = data.point_of_interaction.transaction_data.qr_code_base64;
+
+                const qrWrap = document.getElementById("qrWrap");
+                qrWrap.classList.remove("hidden");
+                qrWrap.innerHTML = `<img src="${qr}" style="width:250px">`;
+
+            } catch (e) {
+                showToast("Erro ao gerar PIX", true);
+            }
+
+            return;
+        }
+
+        // ======================================================
+        // 🔥 DEBITO / CRÉDITO → abrir app nativo conforme dispositivo
+        // ======================================================
+        if (IS_IPHONE) {
+            openMercadoPagoTapToPay(total);
+            closePaymentModal();
+            return;
+        }
+
+        if (IS_ANDROID) {
+            openInfinitePay(total);
+            closePaymentModal();
+            return;
+        }
+
+        showToast("Dispositivo não suportado!", true);
     }
 
 
-    // Eventos
+
     btnConnect.onclick = startFakeScale;
     priceInput.oninput = updateTotal;
 
@@ -142,18 +187,19 @@ document.addEventListener("DOMContentLoaded", () => {
     closeModal.onclick = closePaymentModal;
     cancelPay.onclick = closePaymentModal;
 
-    optDebit.onclick = () => processPayment("debit");
-    optCredit.onclick = () => processPayment("credit");
-    optPix.onclick = () => processPayment("pix");
+    optDebit.onclick = () => sendPayment("debit");
+    optCredit.onclick = () => sendPayment("credit");
+    optPix.onclick = () => sendPayment("pix");
 
-    btnConfig.onclick = () => askPasswordAndGo("config.html");
-    btnReport.onclick = () => askPasswordAndGo("relatorio.html");
-
-
-    function askPasswordAndGo(path) {
+    btnConfig.onclick = () => {
         const p = prompt("Digite a senha (1901):");
-        if (p === "1901") window.location.href = path;
-        else if (p !== null) showToast("Senha incorreta", true);
-    }
+        if (p === "1901") window.location.href = "config.html";
+        else showToast("Senha incorreta", true);
+    };
 
+    btnReport.onclick = () => {
+        const p = prompt("Digite a senha (1901):");
+        if (p === "1901") window.location.href = "relatorio.html";
+        else showToast("Senha incorreta", true);
+    };
 });
