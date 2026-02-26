@@ -1,179 +1,80 @@
-// ===============================================
-// 🔗 INTEGRAÇÃO COM INFINITEPAY (Deep Link)
-// ===============================================
-// O PDV irá chamar: infinitepay://checkout?amount=XX.XX&orderId=XXXX
-// Isso abre automaticamente o app InfinitePay na tela de cobrança.
+let venda = {
+telefone: '',
+peso: 0,
+valor: 0,
+avaliacao: null,
+horario: null
+};
 
-document.addEventListener("DOMContentLoaded", () => {
+const precoPorGrama = 0.05; // ajuste aqui
 
-    // -------------------------------------------
-    // ELEMENTOS DA TELA
-    // -------------------------------------------
-    const weightEl = document.getElementById("weight");
-    const totalEl = document.getElementById("total");
-    const priceInput = document.getElementById("price100");
-    const unitNameEl = document.getElementById("unitName");
+function mostrarTela(id) {
+document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+document.getElementById(id).classList.add('ativa');
+}
 
-    const btnConnect = document.getElementById("btnConnectScale");
-    const btnCharge = document.getElementById("btnCharge");
+function irTelefone() {
+mostrarTela('tela-telefone');
+}
 
-    const btnConfig = document.getElementById("btnConfig");
-    const btnReport = document.getElementById("btnReport");
+function confirmarTelefone() {
+const tel = document.getElementById('telefone').value;
+if (tel.length < 10) return alert('Telefone inválido');
+venda.telefone = tel;
+iniciarPesagem();
+}
 
-    const payModal = document.getElementById("payModal");
-    const closeModal = document.getElementById("closeModal");
-    const cancelPay = document.getElementById("cancelPay");
+function iniciarPesagem() {
+mostrarTela('tela-pesagem');
 
-    const optDebit = document.getElementById("optDebit");
-    const optCredit = document.getElementById("optCredit");
-    const optPix = document.getElementById("optPix");
+// SIMULA leitura da balança (substituir pela real)
+setTimeout(() => {
+venda.peso = Math.floor(Math.random() * 500) + 200;
+venda.valor = (venda.peso * precoPorGrama).toFixed(2);
 
-    const toastEl = document.getElementById("toast");
+document.getElementById('peso').innerText = `Peso: ${venda.peso} g`;
+document.getElementById('valor').innerText = `Valor: R$ ${venda.valor}`;
+}, 1500);
+}
 
-    let currentGrams = 0;
-    let scaleConnected = false;
+function irPagamento() {
+document.getElementById('valor-final').innerText = `R$ ${venda.valor}`;
+mostrarTela('tela-pagamento');
 
+// timeout de segurança (30s)
+setTimeout(resetSistema, 30000);
+}
 
+function confirmarPagamento() {
+venda.horario = new Date().toISOString();
+salvarVenda();
+mostrarTela('tela-sucesso');
 
-    // -------------------------------------------
-    // FUNÇÃO DE AVISO (TOAST)
-    // -------------------------------------------
-    function showToast(msg, isError = false) {
-        toastEl.textContent = msg;
-        toastEl.classList.remove("hidden");
-        toastEl.style.background = isError ? "#b00000" : "#222";
-        setTimeout(() => toastEl.classList.add("hidden"), 2500);
-    }
+setTimeout(() => {
+mostrarTela('tela-avaliacao');
+setTimeout(resetSistema, 5000);
+}, 3000);
+}
 
+function avaliar(nota) {
+venda.avaliacao = nota;
+salvarVenda();
+resetSistema();
+}
 
+function salvarVenda() {
+let vendas = JSON.parse(localStorage.getItem('vendas')) || [];
+vendas.push(venda);
+localStorage.setItem('vendas', JSON.stringify(vendas));
+}
 
-    // -------------------------------------------
-    // CARREGA CONFIGURAÇÕES SALVAS
-    // -------------------------------------------
-    const savedPrice = localStorage.getItem("preco100");
-    if (savedPrice) priceInput.value = savedPrice;
+function resetSistema() {
+venda = {};
+document.getElementById('telefone').value = '';
+document.getElementById('peso').innerText = 'Peso: -- g';
+document.getElementById('valor').innerText = 'Valor: R$ --';
+mostrarTela('tela-inicial');
+}
 
-    const savedUnit = localStorage.getItem("unidadeNome");
-    if (savedUnit) unitNameEl.textContent = savedUnit;
-
-    setTimeout(updateTotal, 100);
-
-
-
-    // -------------------------------------------
-    // CÁLCULO DO TOTAL
-    // -------------------------------------------
-    function parsePrice() {
-        return parseFloat(priceInput.value.replace(",", "."));
-    }
-
-    function updateTotal() {
-        const total = (currentGrams / 100) * parsePrice();
-        totalEl.textContent = total.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-        });
-    }
-
-
-
-    // -------------------------------------------
-    // BALANÇA FAKE (para simulação)
-    // -------------------------------------------
-    function startFakeScale() {
-        if (scaleConnected) return;
-
-        scaleConnected = true;
-        btnConnect.style.display = "none";
-        showToast("Balança conectada (simulação)");
-
-        setInterval(() => {
-            currentGrams = Math.floor(50 + Math.random() * 800);
-            weightEl.textContent = currentGrams + " g";
-            updateTotal();
-        }, 2000);
-    }
-
-
-
-    // -------------------------------------------
-    // MODAL DE PAGAMENTO
-    // -------------------------------------------
-    function openPaymentModal() {
-        payModal.classList.remove("hidden");
-    }
-
-    function closePaymentModal() {
-        payModal.classList.add("hidden");
-    }
-
-
-
-    // ===============================================
-    // 🔥 PAGAMENTO VIA INFINITEPAY (DEEP LINK)
-    // ===============================================
-    function pagarInfinitePay() {
-
-        const price = parsePrice();
-        if (price <= 0 || currentGrams <= 0) {
-            showToast("Peso ou preço inválido!", true);
-            return;
-        }
-
-        const total = Number(((currentGrams / 100) * price).toFixed(2));
-
-        const orderId = "PDV-" + Date.now();
-
-        const deepLink = `infinitepay://checkout?amount=${total}&orderId=${orderId}`;
-
-        showToast("Abrindo InfinitePay...");
-
-        // ABRE O APLICATIVO INFINITEPAY NO ANDROID
-        window.location.href = deepLink;
-
-        closePaymentModal();
-    }
-
-
-
-    // -------------------------------------------
-    // SENHA PARA CONFIG E RELATÓRIO
-    // -------------------------------------------
-    function askPasswordAndGo(path) {
-        const p = prompt("Digite a senha (1901):");
-        if (p === "1901") {
-            window.location.href = path;
-        } else if (p !== null) {
-            showToast("Senha incorreta", true);
-        }
-    }
-
-
-
-    // -------------------------------------------
-    // EVENTOS DOS BOTÕES
-    // -------------------------------------------
-    btnConnect.onclick = startFakeScale;
-
-    priceInput.oninput = updateTotal;
-
-    btnCharge.onclick = () => {
-        if (currentGrams <= 0) {
-            showToast("Coloque algo na balança", true);
-            return;
-        }
-        openPaymentModal();
-    };
-
-    closeModal.onclick = closePaymentModal;
-    cancelPay.onclick = closePaymentModal;
-
-    // 🔥 AQUI CHAMA O TAP TO PAY DA INFINITE PAY
-    optDebit.onclick = pagarInfinitePay;
-    optCredit.onclick = pagarInfinitePay;
-    optPix.onclick = pagarInfinitePay; // opcional, pode remover
-
-    btnConfig.onclick = () => askPasswordAndGo("config.html");
-    btnReport.onclick = () => askPasswordAndGo("relatorio.html");
-
-});
+// inicia
+mostrarTela('tela-inicial');
