@@ -1,268 +1,39 @@
-/* ============================================================
-   STYLE — Rochas Açaí — PDV
-   Versão 100% Responsiva (iPhone / Android / Smart 2 / Navegador)
-   ============================================================ */
 
-/* Paleta */
-:root {
-  --roxo-escuro: #2b0a48;
-  --roxo: #5A189A;
-  --roxo-claro: #7b2ebf;
-  --amarelo: #f5c400;
-  --branco: #ffffff;
-}
-
-/* Reset */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Inter, system-ui, Arial, sans-serif;
+box-sizing: border-box;
+font-family: Arial, sans-serif;
 }
 
-html, body, #app {
-  height: 100%;
-  background: linear-gradient(180deg, #2b0a48 0%, #3a0c5b 50%, #4b0d65 100%);
-  color: var(--branco);
-  -webkit-font-smoothing: antialiased;
+body {
+margin: 0;
+background: #fff;
+text-align: center;
 }
 
-/* ==============================
-   TOPO (Logo + Unidade + Botões)
-   ============================== */
-.topbar {
-  position: relative;
-  height: 90px; /* fixa altura para não quebrar no iPhone */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 16px;
+.tela {
+display: none;
+padding: 40px;
 }
 
-/* LOGO */
-.logo-wrap {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
+.tela.ativa {
+display: block;
 }
 
-.logo {
-  height: 55px;
-  width: auto;
-  object-fit: contain;
+button {
+padding: 15px 30px;
+font-size: 20px;
+margin-top: 20px;
 }
 
-/* Nome da unidade — CENTRALIZADO */
-.unit-name {
-  font-size: 26px;
-  font-weight: 800;
-  text-align: center;
-  color: var(--amarelo);
-
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+input {
+font-size: 22px;
+padding: 10px;
+width: 80%;
+text-align: center;
 }
 
-/* Botões do topo */
-.top-buttons {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  gap: 8px;
-}
-
-.nav-btn {
-  background: rgba(255, 255, 255, 0.12);
-  border: 0;
-  padding: 10px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  color: #fff;
-  backdrop-filter: blur(4px);
-}
-
-.nav-btn:hover {
-  transform: translateY(-2px);
-}
-
-/* ==============================
-   CONTAINER CENTRAL
-   ============================== */
-.container {
-  max-width: 720px;
-  margin: 20px auto 50px;
-  padding: 0 18px;
-  text-align: center;
-}
-
-.card {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 36px 16px;
-  border-radius: 14px;
-  margin-bottom: 22px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-}
-
-.label {
-  font-weight: 600;
-  opacity: 0.9;
-}
-
-.weight {
-  font-size: 48px;
-  font-weight: 900;
-  margin: 4px 0;
-}
-
-.total {
-  font-size: 42px;
-  font-weight: 900;
-  margin-top: 10px;
-}
-
-/* Campos */
-.field {
-  max-width: 520px;
-  margin: 12px auto;
-  text-align: left;
-}
-
-.field label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-.field input {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  background: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
-}
-
-/* BOTÕES */
-.btn {
-  display: block;
-  width: 100%;
-  max-width: 520px;
-  margin: 14px auto;
-  padding: 16px;
-  border-radius: 12px;
-  border: 0;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background: linear-gradient(180deg, var(--roxo-claro), var(--roxo));
-  color: #fff;
-}
-
-.btn-cta {
-  background: linear-gradient(180deg, var(--amarelo), #d7b000);
-  color: #111;
-}
-
-/* ==============================
-   MODAL PAGAMENTO
-   ============================== */
-.modal {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 900;
-}
-
-.modal.hidden { display: none; }
-
-.modal-content {
-  width: 92%;
-  max-width: 420px;
-  background: #fff;
-  color: #111;
-  padding: 22px;
-  border-radius: 12px;
-  position: relative;
-}
-
-.close {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  border: 0;
-  background: none;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.pay-btn {
-  width: 100%;
-  margin: 6px 0;
-  padding: 14px;
-  border-radius: 10px;
-  border: 0;
-  font-weight: 700;
-  background: var(--roxo);
-  color: #fff;
-}
-
-.pay-btn.cancel {
-  background: #777;
-}
-
-/* Toast */
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: 20px;
-  transform: translateX(-50%);
-  background: #222;
-  padding: 12px 18px;
-  border-radius: 10px;
-  color: #fff;
-  z-index: 1000;
-}
-
-.toast.hidden { display: none; }
-
-/* ==============================
-   RESPONSIVIDADE
-   ============================== */
-@media (max-width: 600px) {
-  .unit-name {
-    font-size: 18px;
-  }
-
-  .logo {
-    height: 45px;
-  }
-
-  .weight {
-    font-size: 38px;
-  }
-
-  .total {
-    font-size: 30px;
-  }
-
-  .card {
-    padding: 26px 14px;
-  }
+.emojis span {
+font-size: 80px;
+margin: 20px;
+cursor: pointer;
 }
