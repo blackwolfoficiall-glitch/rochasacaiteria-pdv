@@ -1,98 +1,80 @@
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-font-family: Arial, sans-serif;
+let venda = {
+  telefone: '',
+  peso: 0,
+  valor: 0,
+  avaliacao: null,
+  horario: null
+};
+
+const precoPorGrama = 0.05; // ajuste aqui
+
+function mostrarTela(id) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById(id).classList.add('ativa');
 }
 
-body {
-background: linear-gradient(135deg, #3a0b63, #6a1bb1);
-color: #fff;
-height: 100vh;
+function irTelefone() {
+  mostrarTela('tela-telefone');
 }
 
-.tela {
-display: none;
-height: 100vh;
-width: 100%;
-padding: 40px 20px;
-text-align: center;
-
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
+function confirmarTelefone() {
+  const tel = document.getElementById('telefone').value;
+  if (tel.length < 10) return alert('Telefone inválido');
+  venda.telefone = tel;
+  iniciarPesagem();
 }
 
-.tela.ativa {
-display: flex;
+function iniciarPesagem() {
+  mostrarTela('tela-pesagem');
+
+  // SIMULA leitura da balança (substituir pela real)
+  setTimeout(() => {
+    venda.peso = Math.floor(Math.random() * 500) + 200;
+    venda.valor = (venda.peso * precoPorGrama).toFixed(2);
+
+    document.getElementById('peso').innerText = `Peso: ${venda.peso} g`;
+    document.getElementById('valor').innerText = `Valor: R$ ${venda.valor}`;
+  }, 1500);
 }
 
-/* LOGO AJUSTADA + SOMBRA */
-.logo {
-width: 180px;
-max-width: 70%;
-height: auto;
-margin-bottom: 25px;
-object-fit: contain;
-filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
+function irPagamento() {
+  document.getElementById('valor-final').innerText = `R$ ${venda.valor}`;
+  mostrarTela('tela-pagamento');
+
+  // timeout de segurança (30s)
+  setTimeout(resetSistema, 30000);
 }
 
-/* TEXTOS */
-h1 {
-font-size: 34px;
-margin-bottom: 10px;
+function confirmarPagamento() {
+  venda.horario = new Date().toISOString();
+  salvarVenda();
+  mostrarTela('tela-sucesso');
+
+  setTimeout(() => {
+    mostrarTela('tela-avaliacao');
+    setTimeout(resetSistema, 5000);
+  }, 3000);
 }
 
-h2 {
-font-size: 28px;
-margin-bottom: 20px;
+function avaliar(nota) {
+  venda.avaliacao = nota;
+  salvarVenda();
+  resetSistema();
 }
 
-p {
-font-size: 16px;
-opacity: 0.9;
-margin-bottom: 20px;
+function salvarVenda() {
+  let vendas = JSON.parse(localStorage.getItem('vendas')) || [];
+  vendas.push(venda);
+  localStorage.setItem('vendas', JSON.stringify(vendas));
 }
 
-/* INPUT */
-input {
-width: 80%;
-max-width: 300px;
-padding: 15px;
-font-size: 18px;
-border-radius: 8px;
-border: none;
-text-align: center;
-margin-bottom: 20px;
+function resetSistema() {
+  venda = {};
+  document.getElementById('telefone').value = '';
+  document.getElementById('peso').innerText = 'Peso: -- g';
+  document.getElementById('valor').innerText = 'Valor: R$ --';
+  mostrarTela('tela-inicial');
 }
 
-/* BOTÃO */
-button {
-background: #ffd600;
-color: #000;
-border: none;
-border-radius: 10px;
-padding: 15px 40px;
-font-size: 18px;
-font-weight: bold;
-cursor: pointer;
-}
-
-button:active {
-transform: scale(0.97);
-}
-
-/* PESO */
-.peso {
-font-size: 42px;
-font-weight: bold;
-margin: 20px 0;
-}
-
-/* AVALIAÇÃO */
-.avaliacao span {
-font-size: 40px;
-margin: 10px;
-cursor: pointer;
-}
+// inicia
+mostrarTela('tela-inicial');
