@@ -1,88 +1,68 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Rochas Açaíteria</title>
-<link rel="stylesheet" href="estilo.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rochas Açaíteria</title>
+  <link rel="stylesheet" href="estilo.css">
 </head>
-
 <body>
 
-<!-- TELA 1 - INÍCIO -->
-<div class="tela ativa" id="telaInicio">
-<img src="logo.png" class="logo" alt="Rochas Açaíteria" />
-<h1>Bem-vindo</h1>
-<p>Autoatendimento Rochas Açaíteria</p>
-<button onclick="irParaTelefone()">Começar</button>
-</div>
+<!-- TELA 1 -->
+<section class="tela ativa" id="inicio">
+  <img src="logo.png" class="logo">
+  <h1>Bem-vindo</h1>
+  <p>Autoatendimento Rochas Açaíteria</p>
+  <button onclick="mostrar('telefone')">Começar</button>
+</section>
 
-<!-- TELA 2 - TELEFONE -->
-<div class="tela" id="telaTelefone">
-<h2>Digite seu telefone</h2>
-<input type="tel" id="telefone" placeholder="DDD + número" />
-<button onclick="irParaPeso()">Continuar</button>
-</div>
+<!-- TELA 2 -->
+<section class="tela" id="telefone">
+  <h2>Digite seu telefone</h2>
+  <input type="tel" placeholder="DDD + número">
+  <button onclick="mostrar('peso')">Continuar</button>
+</section>
 
-<!-- TELA 3 - PESO -->
-<div class="tela" id="telaPeso">
-<h2>Coloque o pote na balança</h2>
-<div class="peso">714 g</div>
-<p>Valor: <strong>R$ 25,00</strong></p>
-<button onclick="irParaPagamento()">Continuar</button>
-</div>
+<!-- TELA 3 -->
+<section class="tela" id="peso">
+  <h2>Coloque o pote na balança</h2>
+  <div class="peso">714 g</div>
+  <p>Valor: <strong>R$ 25,00</strong></p>
+  <button onclick="mostrar('pagamento')">Continuar</button>
+</section>
 
-<!-- TELA 4 - PAGAMENTO -->
-<div class="tela" id="telaPagamento">
-<h2>Pague na maquininha</h2>
-<p>Após pagar, toque em confirmar</p>
-<button onclick="confirmarPagamento()">Já paguei</button>
-</div>
+<!-- TELA 4 -->
+<section class="tela" id="pagamento">
+  <h2>Pague na maquininha</h2>
+  <p>Depois toque em confirmar</p>
+  <button onclick="confirmar()">Confirmar pagamento</button>
+</section>
 
-<!-- TELA 5 - CONFIRMADO -->
-<div class="tela" id="telaConfirmado">
-<h2>Pagamento confirmado ✅</h2>
-<p>Obrigado pela preferência!</p>
-</div>
-
-<!-- TELA 6 - AVALIAÇÃO -->
-<div class="tela" id="telaAvaliacao">
-<h2>Como foi sua experiência?</h2>
-<div class="avaliacao">
-<span onclick="finalizar()">😡</span>
-<span onclick="finalizar()">😐</span>
-<span onclick="finalizar()">😊</span>
-<span onclick="finalizar()">😍</span>
-</div>
-</div>
+<!-- TELA 5 -->
+<section class="tela" id="avaliacao">
+  <h2>Como foi sua experiência?</h2>
+  <div class="avaliacao">
+    <span onclick="resetar()">😡</span>
+    <span onclick="resetar()">😐</span>
+    <span onclick="resetar()">😊</span>
+    <span onclick="resetar()">😍</span>
+  </div>
+</section>
 
 <script>
-function trocarTela(id) {
-document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
-document.getElementById(id).classList.add('ativa');
+function mostrar(id) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById(id).classList.add('ativa');
 }
 
-function irParaTelefone() {
-trocarTela('telaTelefone');
+function confirmar() {
+  setTimeout(() => {
+    mostrar('avaliacao');
+  }, 1500);
 }
 
-function irParaPeso() {
-trocarTela('telaPeso');
-}
-
-function irParaPagamento() {
-trocarTela('telaPagamento');
-}
-
-function confirmarPagamento() {
-trocarTela('telaConfirmado');
-setTimeout(() => {
-trocarTela('telaAvaliacao');
-}, 2000);
-}
-
-function finalizar() {
-trocarTela('telaInicio');
+function resetar() {
+  mostrar('inicio');
 }
 </script>
 
