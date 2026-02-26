@@ -1,52 +1,76 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Autoatendimento Açaí</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rochas Açaíteria • Autoatendimento</title>
+
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <div id="app">
 
-<!-- TELA 1 - INICIAL -->
-<section id="tela-inicial" class="tela ativa">
+<!-- TELA 1 - BOAS-VINDAS -->
+<section id="tela-inicio" class="tela ativa">
 <h1>Bem-vindo 🍧</h1>
-<button onclick="irTelefone()">Começar</button>
+<p>Autoatendimento Rochas Açaíteria</p>
+
+<button onclick="irParaTelefone()">Começar</button>
 </section>
 
 <!-- TELA 2 - TELEFONE -->
 <section id="tela-telefone" class="tela">
 <h2>Digite seu telefone</h2>
-<input id="telefone" type="tel" placeholder="DDD + número">
-<button onclick="confirmarTelefone()">Continuar</button>
+<p>Para liberar o atendimento</p>
+
+<input
+type="tel"
+id="telefone"
+placeholder="DDD + número"
+maxlength="11"
+/>
+
+<button onclick="irParaPeso()">Continuar</button>
+<button class="secundario" onclick="voltarInicio()">Cancelar</button>
 </section>
 
-<!-- TELA 3 - PESAGEM -->
-<section id="tela-pesagem" class="tela">
+<!-- TELA 3 - PESO -->
+<section id="tela-peso" class="tela">
 <h2>Coloque o pote na balança</h2>
-<p id="peso">Peso: -- g</p>
-<p id="valor">Valor: R$ --</p>
-<button onclick="irPagamento()">Continuar</button>
+
+<p>Peso detectado</p>
+<div class="valor-grande" id="peso">0 g</div>
+
+<p>Valor a pagar</p>
+<div class="valor-grande" id="valor">R$ 0,00</div>
+
+<button onclick="irParaPagamento()">Continuar</button>
 </section>
 
 <!-- TELA 4 - PAGAMENTO -->
 <section id="tela-pagamento" class="tela">
 <h2>Pague na maquininha</h2>
-<p>Valor: <strong id="valor-final"></strong></p>
+
+<p>Valor a pagar</p>
+<div class="valor-grande" id="valor-final">R$ 0,00</div>
+
+<p>Use cartão ou aproximação</p>
+
 <button onclick="confirmarPagamento()">Já paguei</button>
 </section>
 
 <!-- TELA 5 - SUCESSO -->
 <section id="tela-sucesso" class="tela">
 <h2>Pagamento confirmado ✅</h2>
-<p>Obrigado!</p>
+<p>Obrigado pela preferência</p>
 </section>
 
 <!-- TELA 6 - AVALIAÇÃO -->
 <section id="tela-avaliacao" class="tela">
 <h2>Como foi sua experiência?</h2>
+<p>Toque para avaliar</p>
+
 <div class="emojis">
 <span onclick="avaliar(1)">😡</span>
 <span onclick="avaliar(2)">😐</span>
@@ -57,6 +81,82 @@
 
 </div>
 
-<script src="app.js"></script>
+<script>
+/* ======================
+CONFIGURAÇÕES
+====================== */
+const PRECO_POR_100G = 4.50; // ajuste aqui
+const TEMPO_RETORNO = 3000; // 3s
+
+/* ======================
+UTILIDADES
+====================== */
+function mostrarTela(id) {
+document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+document.getElementById(id).classList.add("ativa");
+}
+
+function voltarInicio() {
+mostrarTela("tela-inicio");
+}
+
+/* ======================
+FLUXO
+====================== */
+function irParaTelefone() {
+mostrarTela("tela-telefone");
+}
+
+function irParaPeso() {
+const tel = document.getElementById("telefone").value;
+if (tel.length < 10) {
+alert("Digite um telefone válido");
+return;
+}
+
+mostrarTela("tela-peso");
+simularPeso();
+}
+
+function irParaPagamento() {
+mostrarTela("tela-pagamento");
+}
+
+/* ======================
+BALANÇA (SIMULADO)
+====================== */
+function simularPeso() {
+// Aqui futuramente entra a leitura real via USB OTG
+const peso = Math.floor(Math.random() * 800) + 300; // 300g a 1100g
+const valor = ((peso / 100) * PRECO_POR_100G).toFixed(2);
+
+document.getElementById("peso").innerText = peso + " g";
+document.getElementById("valor").innerText = "R$ " + valor;
+document.getElementById("valor-final").innerText = "R$ " + valor;
+}
+
+/* ======================
+PAGAMENTO
+====================== */
+function confirmarPagamento() {
+mostrarTela("tela-sucesso");
+
+setTimeout(() => {
+mostrarTela("tela-avaliacao");
+}, 2000);
+}
+
+/* ======================
+AVALIAÇÃO
+====================== */
+function avaliar(nota) {
+console.log("Avaliação:", nota);
+
+setTimeout(() => {
+voltarInicio();
+}, TEMPO_RETORNO);
+}
+</script>
+
 </body>
 </html>
