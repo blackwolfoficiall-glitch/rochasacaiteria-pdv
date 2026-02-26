@@ -1,57 +1,90 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Rochas Açaíteria • Autoatendimento</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="estilo.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rochas Açaíteria</title>
+<link rel="stylesheet" href="estilo.css" />
 </head>
+
 <body>
 
 <!-- TELA 1 - INÍCIO -->
-<section class="tela ativa" id="telaInicio">
-<img src="./logo.png" class="logo" alt="Rochas Açaíteria">
+<div class="tela ativa" id="telaInicio">
+<img src="logo.png" class="logo" alt="Rochas Açaíteria" />
 <h1>Bem-vindo</h1>
 <p>Autoatendimento Rochas Açaíteria</p>
 <button onclick="irParaTelefone()">Começar</button>
-</section>
+</div>
 
 <!-- TELA 2 - TELEFONE -->
-<section class="tela" id="telaTelefone">
+<div class="tela" id="telaTelefone">
 <h2>Digite seu telefone</h2>
-<input type="tel" id="telefone" placeholder="DDD + número">
+<input type="tel" id="telefone" placeholder="DDD + número" />
 <button onclick="irParaPeso()">Continuar</button>
-</section>
+</div>
 
 <!-- TELA 3 - PESO -->
-<section class="tela" id="telaPeso">
+<div class="tela" id="telaPeso">
 <h2>Coloque o pote na balança</h2>
-<div class="peso">
-<span id="peso">714</span> g
-</div>
-<p>Total: <strong>R$ <span id="valor">35,70</span></strong></p>
+<div class="peso">714 g</div>
+<p>Valor: <strong>R$ 25,00</strong></p>
 <button onclick="irParaPagamento()">Continuar</button>
-</section>
+</div>
 
 <!-- TELA 4 - PAGAMENTO -->
-<section class="tela" id="telaPagamento">
+<div class="tela" id="telaPagamento">
 <h2>Pague na maquininha</h2>
-<p>Valor: <strong>R$ 35,70</strong></p>
-<button class="verde" onclick="confirmarPagamento()">Já paguei</button>
-</section>
+<p>Após pagar, toque em confirmar</p>
+<button onclick="confirmarPagamento()">Já paguei</button>
+</div>
 
-<!-- TELA 5 - AVALIAÇÃO -->
-<section class="tela" id="telaAvaliacao">
+<!-- TELA 5 - CONFIRMADO -->
+<div class="tela" id="telaConfirmado">
+<h2>Pagamento confirmado ✅</h2>
+<p>Obrigado pela preferência!</p>
+</div>
+
+<!-- TELA 6 - AVALIAÇÃO -->
+<div class="tela" id="telaAvaliacao">
 <h2>Como foi sua experiência?</h2>
 <div class="avaliacao">
-<button onclick="finalizar()">😡</button>
-<button onclick="finalizar()">😐</button>
-<button onclick="finalizar()">🙂</button>
-<button onclick="finalizar()">😍</button>
+<span onclick="finalizar()">😡</span>
+<span onclick="finalizar()">😐</span>
+<span onclick="finalizar()">😊</span>
+<span onclick="finalizar()">😍</span>
 </div>
-<p>Obrigado ❤️</p>
-</section>
+</div>
 
-<script src="app.js"></script>
+<script>
+function trocarTela(id) {
+document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+document.getElementById(id).classList.add('ativa');
+}
+
+function irParaTelefone() {
+trocarTela('telaTelefone');
+}
+
+function irParaPeso() {
+trocarTela('telaPeso');
+}
+
+function irParaPagamento() {
+trocarTela('telaPagamento');
+}
+
+function confirmarPagamento() {
+trocarTela('telaConfirmado');
+setTimeout(() => {
+trocarTela('telaAvaliacao');
+}, 2000);
+}
+
+function finalizar() {
+trocarTela('telaInicio');
+}
+</script>
+
 </body>
 </html>
