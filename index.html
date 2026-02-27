@@ -3,232 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rochas Açaí - Autoatendimento</title>
+<title>Rochas Açaí</title>
 
 <style>
-* { box-sizing: border-box; font-family: Arial, sans-serif; }
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #5a189a, #7b2cbf);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+body{
+margin:0;
+min-height:100vh;
+background:linear-gradient(180deg,#5a189a,#7b2cbf);
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
-.container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  position: relative;
+.container{width:100%;display:flex;justify-content:center}
+
+.card{
+background:#6a1bb9;
+width:90%;
+max-width:420px;
+padding:30px;
+border-radius:22px;
+color:#fff;
+text-align:center;
+box-shadow:0 25px 50px rgba(0,0,0,.35);
 }
 
-.config-btn {
-  position: absolute;
-  top: -60px;
-  right: 10px;
-  background: #fff;
-  color: #5a189a;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  font-size: 22px;
-  border: none;
-  cursor: pointer;
+h1{font-size:22px;margin-bottom:20px}
+
+input{
+width:100%;
+padding:15px;
+font-size:18px;
+border:none;
+border-radius:12px;
+margin:12px 0;
 }
 
-.tela {
-  display: none;
-  background: #fff;
-  width: 90%;
-  max-width: 420px;
-  padding: 30px;
-  border-radius: 18px;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+button{
+width:100%;
+padding:15px;
+font-size:18px;
+border:none;
+border-radius:14px;
+background:linear-gradient(90deg,#9d4edd,#c77dff);
+color:#fff;
+cursor:pointer;
 }
 
-.tela.ativa { display: block; }
+.hidden{display:none}
 
-.titulo-loja {
-  font-size: 22px;
-  font-weight: bold;
-  color: #5a189a;
-  margin-bottom: 20px;
+/* CONFIG */
+.config-btn{
+position:fixed;
+top:20px;
+right:20px;
+width:48px;
+height:48px;
+border-radius:50%;
+border:none;
+background:linear-gradient(135deg,#c77dff,#9d4edd);
+color:#fff;
+font-size:22px;
+box-shadow:0 10px 25px rgba(0,0,0,.4);
 }
 
-input {
-  width: 100%;
-  padding: 15px;
-  font-size: 18px;
-  margin: 15px 0;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+/* MODAL */
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.7);
+display:none;
+justify-content:center;
+align-items:center;
 }
 
-button {
-  width: 100%;
-  padding: 15px;
-  font-size: 18px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(90deg, #7b2cbf, #9d4edd);
-  color: #fff;
-  cursor: pointer;
+.modal-box{
+background:#fff;
+color:#333;
+width:90%;
+max-width:360px;
+padding:25px;
+border-radius:18px;
+text-align:center;
 }
 
-h2 { margin: 10px 0 20px; }
-
-.avaliacao {
-  display: flex;
-  justify-content: space-between;
-}
-
-.avaliacao button {
-  width: 18%;
-  font-size: 28px;
-  background: none;
-}
-
-/* MODAL CONFIG */
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: #fff;
-  padding: 25px;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 350px;
-  text-align: center;
-}
+.modal-box input{border:1px solid #ccc}
 </style>
 </head>
 
 <body>
 
+<button class="config-btn" onclick="abrirSenha()">⚙️</button>
+
 <div class="container">
-  <button class="config-btn" onclick="abrirSenha()">⚙</button>
+<div class="card" id="telaTelefone">
+<h1 id="titulo">Rochas Açaí – Unidade Ilha 9</h1>
+<input id="telefone" placeholder="Digite seu telefone">
+<button onclick="irPeso()">Continuar</button>
+</div>
 
-  <!-- TELA 1 -->
-  <div class="tela ativa" id="telaTelefone">
-    <div class="titulo-loja" id="tituloLoja">Rochas Açaí – Unidade Ilha 9</div>
-    <input type="tel" id="telefone" placeholder="Digite seu telefone">
-    <button onclick="irParaPeso()">Continuar</button>
-  </div>
+<div class="card hidden" id="telaPeso">
+<h1>Peso atual</h1>
+<h1 id="peso">0 g</h1>
+<button onclick="simularPeso()">Simular peso</button>
+<button onclick="irPagamento()">Continuar</button>
+</div>
 
-  <!-- TELA 2 -->
-  <div class="tela" id="telaPeso">
-    <h2>Peso atual</h2>
-    <h2 id="peso">0 g</h2>
-    <button onclick="simularPeso()">Simular peso</button>
-    <button onclick="irParaPagamento()">Continuar</button>
-  </div>
+<div class="card hidden" id="telaPagamento">
+<h1>Pague na maquininha</h1>
+<h1 id="valor">R$ 0,00</h1>
+<button onclick="confirmar()">Pagamento confirmado</button>
+</div>
 
-  <!-- TELA 3 -->
-  <div class="tela" id="telaPagamento">
-    <h2>Pague na maquininha agora</h2>
-    <h2 id="valor">R$ 0,00</h2>
-    <button onclick="confirmarPagamento()">Pagamento confirmado</button>
-  </div>
-
-  <!-- TELA 4 -->
-  <div class="tela" id="telaAvaliacao">
-    <h2>Avalie o atendimento</h2>
-    <div class="avaliacao">
-      <button onclick="avaliar(1)">😡</button>
-      <button onclick="avaliar(2)">😕</button>
-      <button onclick="avaliar(3)">😐</button>
-      <button onclick="avaliar(4)">🙂</button>
-      <button onclick="avaliar(5)">😍</button>
-    </div>
-  </div>
+<div class="card hidden" id="telaAvaliacao">
+<h1>Avalie o atendimento</h1>
+<button onclick="finalizar()">😍 Ótimo</button>
+</div>
 </div>
 
 <!-- MODAIS -->
-<div class="modal" id="modalSenha">
-  <div class="modal-content">
-    <h3>Senha</h3>
-    <input type="password" id="senhaConfig" placeholder="Digite a senha">
-    <button onclick="validarSenha()">Entrar</button>
-  </div>
+<div class="modal" id="senhaModal">
+<div class="modal-box">
+<h3>Senha</h3>
+<input id="senha">
+<button onclick="validarSenha()">Entrar</button>
+</div>
 </div>
 
-<div class="modal" id="modalConfig">
-  <div class="modal-content">
-    <h3>Configurações</h3>
-    <input type="number" id="novoValorKg" placeholder="Valor do KG (ex: 50)">
-    <input type="text" id="novoTitulo" placeholder="Título da loja">
-    <button onclick="salvarConfig()">Salvar</button>
-    <button onclick="baixarPDF()">Baixar relatório PDF</button>
-    <button onclick="fecharConfig()">Fechar</button>
-  </div>
+<div class="modal" id="configModal">
+<div class="modal-box">
+<h3>Configurações</h3>
+<input id="novoTitulo" placeholder="Título da loja">
+<input id="novoKg" type="number" placeholder="Valor do KG">
+<button onclick="salvarConfig()">Salvar</button>
+<button onclick="gerarPDF()">Gerar PDF</button>
+<button onclick="fecharConfig()">Fechar</button>
+</div>
 </div>
 
 <script>
-let pesoAtual = 0;
-let valorKg = 50;
-let vendas = [];
+let pesoAtual=0
+let valorKg=localStorage.getItem("kg")||50
+let vendas=JSON.parse(localStorage.getItem("vendas")||"[]")
 
-function trocarTela(id){
-  document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
-  document.getElementById(id).classList.add('ativa');
+titulo.innerText=localStorage.getItem("titulo")||titulo.innerText
+
+function trocar(a,b){document.getElementById(a).classList.add("hidden");document.getElementById(b).classList.remove("hidden")}
+
+function irPeso(){if(telefone.value.length<8)return alert("Telefone inválido");trocar("telaTelefone","telaPeso")}
+function simularPeso(){pesoAtual=Math.floor(Math.random()*800)+200;peso.innerText=pesoAtual+" g"}
+function irPagamento(){
+let v=(pesoAtual/1000*valorKg).toFixed(2)
+valor.innerText="R$ "+v.replace(".",",")
+trocar("telaPeso","telaPagamento")
+}
+function confirmar(){
+let venda={
+codigo:"RA"+Date.now(),
+telefone:telefone.value,
+peso:pesoAtual,
+valor:(pesoAtual/1000*valorKg).toFixed(2),
+data:new Date().toLocaleString()
+}
+vendas.push(venda)
+localStorage.setItem("vendas",JSON.stringify(vendas))
+trocar("telaPagamento","telaAvaliacao")
+setTimeout(()=>location.reload(),3000)
 }
 
-function irParaPeso(){
-  if(telefone.value.length < 8) return alert("Telefone inválido");
-  trocarTela('telaPeso');
-}
-
-function simularPeso(){
-  pesoAtual = Math.floor(Math.random()*800)+200;
-  peso.innerText = pesoAtual + " g";
-}
-
-function irParaPagamento(){
-  if(pesoAtual===0) return alert("Peso inválido");
-  const valor = ((pesoAtual/1000)*valorKg).toFixed(2);
-  valorEl = document.getElementById("valor");
-  valorEl.innerText = "R$ " + valor.replace('.',',');
-  trocarTela('telaPagamento');
-}
-
-function confirmarPagamento(){
-  vendas.push({peso:pesoAtual, data:new Date()});
-  trocarTela('telaAvaliacao');
-  setTimeout(()=>trocarTela('telaTelefone'),3000);
-}
-
-function avaliar(n){ console.log("Avaliação:",n); }
-
-function abrirSenha(){ modalSenha.style.display='flex'; }
-function validarSenha(){
-  if(senhaConfig.value==="1951"){
-    modalSenha.style.display='none';
-    modalConfig.style.display='flex';
-  } else alert("Senha incorreta");
-}
+/* CONFIG */
+function abrirSenha(){senhaModal.style.display="flex"}
+function validarSenha(){if(senha.value==="1951"){senhaModal.style.display="none";configModal.style.display="flex"}else alert("Senha errada")}
+function fecharConfig(){configModal.style.display="none"}
 
 function salvarConfig(){
-  if(novoValorKg.value) valorKg = parseFloat(novoValorKg.value);
-  if(novoTitulo.value) tituloLoja.innerText = novoTitulo.value;
-  alert("Configurações salvas");
+if(novoTitulo.value){localStorage.setItem("titulo",novoTitulo.value);titulo.innerText=novoTitulo.value}
+if(novoKg.value){localStorage.setItem("kg",novoKg.value);valorKg=novoKg.value}
+alert("Configurações salvas")
 }
 
-function baixarPDF(){
-  window.print();
-}
-
-function fecharConfig(){
-  modalConfig.style.display='none';
+/* PDF */
+function gerarPDF(){
+let texto="RELATÓRIO ROCHAS AÇAÍ\n\n"
+vendas.forEach(v=>{
+texto+=`Código: ${v.codigo}\nTelefone: ${v.telefone}\nPeso: ${v.peso}g\nValor: R$ ${v.valor}\nData: ${v.data}\n\n`
+})
+let blob=new Blob([texto],{type:"text/plain"})
+let a=document.createElement("a")
+a.href=URL.createObjectURL(blob)
+a.download="relatorio_rochas_acai.txt"
+a.click()
 }
 </script>
 
