@@ -1,80 +1,65 @@
-let venda = {
-  telefone: '',
-  peso: 0,
-  valor: 0,
-  avaliacao: null,
-  horario: null
-};
+let telefone = "";
+let peso = 0;
+let valor = 0;
+let avaliacao = 0;
 
-const precoPorGrama = 0.05; // ajuste aqui
+const precoPor100g = 5.00;
 
-function mostrarTela(id) {
-  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
-  document.getElementById(id).classList.add('ativa');
+function trocarTela(id) {
+  document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+  document.getElementById(id).classList.add("ativa");
 }
 
-function irTelefone() {
-  mostrarTela('tela-telefone');
+function irParaPeso() {
+  telefone = document.getElementById("telefone").value;
+  if (!telefone) return alert("Digite o telefone");
+  trocarTela("telaPeso");
 }
 
-function confirmarTelefone() {
-  const tel = document.getElementById('telefone').value;
-  if (tel.length < 10) return alert('Telefone inválido');
-  venda.telefone = tel;
-  iniciarPesagem();
+function simularPeso() {
+  peso = Math.floor(Math.random() * 800) + 200;
+  document.getElementById("peso").innerText = peso + " g";
 }
 
-function iniciarPesagem() {
-  mostrarTela('tela-pesagem');
-
-  // SIMULA leitura da balança (substituir pela real)
-  setTimeout(() => {
-    venda.peso = Math.floor(Math.random() * 500) + 200;
-    venda.valor = (venda.peso * precoPorGrama).toFixed(2);
-
-    document.getElementById('peso').innerText = `Peso: ${venda.peso} g`;
-    document.getElementById('valor').innerText = `Valor: R$ ${venda.valor}`;
-  }, 1500);
-}
-
-function irPagamento() {
-  document.getElementById('valor-final').innerText = `R$ ${venda.valor}`;
-  mostrarTela('tela-pagamento');
-
-  // timeout de segurança (30s)
-  setTimeout(resetSistema, 30000);
+function irParaPagamento() {
+  valor = ((peso / 100) * precoPor100g).toFixed(2);
+  document.getElementById("valor").innerText = "R$ " + valor;
+  trocarTela("telaPagamento");
 }
 
 function confirmarPagamento() {
-  venda.horario = new Date().toISOString();
-  salvarVenda();
-  mostrarTela('tela-sucesso');
-
-  setTimeout(() => {
-    mostrarTela('tela-avaliacao');
-    setTimeout(resetSistema, 5000);
-  }, 3000);
+  trocarTela("telaAvaliacao");
 }
 
 function avaliar(nota) {
-  venda.avaliacao = nota;
+  avaliacao = nota;
   salvarVenda();
-  resetSistema();
+  setTimeout(() => location.reload(), 30000);
 }
 
 function salvarVenda() {
-  let vendas = JSON.parse(localStorage.getItem('vendas')) || [];
-  vendas.push(venda);
-  localStorage.setItem('vendas', JSON.stringify(vendas));
+  const vendas = JSON.parse(localStorage.getItem("vendas")) || [];
+
+  vendas.push({
+    telefone,
+    peso,
+    valor: Number(valor),
+    avaliacao,
+    data: new Date().toLocaleString("pt-BR")
+  });
+
+  localStorage.setItem("vendas", JSON.stringify(vendas));
 }
 
-function resetSistema() {
-  venda = {};
-  document.getElementById('telefone').value = '';
-  document.getElementById('peso').innerText = 'Peso: -- g';
-  document.getElementById('valor').innerText = 'Valor: R$ --';
-  mostrarTela('tela-inicial');
-}
+/* MODO QUIOSQUE */
+history.pushState(null, null, location.href);
+window.onpopstate = () => history.pushState(null, null, location.href);
 
-// inicia
-mostrarTela('tela-inicial');
+/* ACESSO SECRETO AO DASHBOARD */
+let timer;
+document.addEventListener("touchstart", () => {
+  timer = setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 5000);
+});
+document.addEventListener("touchend", () => clearTimeout(timer));
