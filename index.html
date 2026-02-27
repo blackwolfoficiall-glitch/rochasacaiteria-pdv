@@ -4,20 +4,96 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rochas Açaí - Autoatendimento</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- CSS EMBUTIDO -->
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f5f5f5, #eaeaea);
+    }
+
+    .container {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .tela {
+      display: none;
+      background: #ffffff;
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+
+    .tela.ativa {
+      display: block;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      margin: 20px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #7b2cbf;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:active {
+      opacity: 0.8;
+    }
+
+    .avaliacao {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .avaliacao button {
+      width: 18%;
+      font-size: 28px;
+      background: none;
+    }
+  </style>
 </head>
+
 <body>
 
 <div class="container">
 
-  <!-- PASSO 1 -->
+  <!-- PASSO 1 - TELEFONE -->
   <div class="tela ativa" id="telaTelefone">
     <h1>Digite seu telefone</h1>
     <input type="tel" id="telefone" placeholder="DDD + número">
     <button onclick="irParaPeso()">Continuar</button>
   </div>
 
-  <!-- PASSO 2 -->
+  <!-- PASSO 2 - PESO -->
   <div class="tela" id="telaPeso">
     <h1>Coloque o pote na balança</h1>
     <p>Peso atual:</p>
@@ -26,7 +102,7 @@
     <button onclick="irParaPagamento()">Continuar</button>
   </div>
 
-  <!-- PASSO 3 -->
+  <!-- PASSO 3 - PAGAMENTO -->
   <div class="tela" id="telaPagamento">
     <h1>Realize o pagamento</h1>
     <p>Valor a pagar:</p>
@@ -34,7 +110,7 @@
     <button onclick="confirmarPagamento()">Pagamento confirmado</button>
   </div>
 
-  <!-- PASSO 4 -->
+  <!-- PASSO 4 - AVALIAÇÃO -->
   <div class="tela" id="telaAvaliacao">
     <h1>Avalie nosso serviço</h1>
     <div class="avaliacao">
@@ -44,11 +120,61 @@
       <button onclick="avaliar(4)">🙂</button>
       <button onclick="avaliar(5)">😍</button>
     </div>
-    <p>Obrigado!</p>
+    <p>Obrigado pela sua visita!</p>
   </div>
 
 </div>
 
-<script src="app.js"></script>
+<!-- JAVASCRIPT -->
+<script>
+  let pesoAtual = 0;
+  const precoPorGrama = 0.05;
+
+  function trocarTela(id) {
+    document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+    document.getElementById(id).classList.add('ativa');
+  }
+
+  function irParaPeso() {
+    const tel = document.getElementById('telefone').value;
+    if (tel.length < 8) {
+      alert('Digite um telefone válido');
+      return;
+    }
+    trocarTela('telaPeso');
+  }
+
+  function simularPeso() {
+    pesoAtual = Math.floor(Math.random() * 800) + 200;
+    document.getElementById('peso').innerText = pesoAtual + ' g';
+  }
+
+  function irParaPagamento() {
+    if (pesoAtual === 0) {
+      alert('Coloque o pote na balança');
+      return;
+    }
+    const valor = (pesoAtual * precoPorGrama).toFixed(2);
+    document.getElementById('valor').innerText = 'R$ ' + valor.replace('.', ',');
+    trocarTela('telaPagamento');
+  }
+
+  function confirmarPagamento() {
+    trocarTela('telaAvaliacao');
+
+    // volta para início após 3 segundos
+    setTimeout(() => {
+      pesoAtual = 0;
+      document.getElementById('peso').innerText = '0 g';
+      document.getElementById('telefone').value = '';
+      trocarTela('telaTelefone');
+    }, 3000);
+  }
+
+  function avaliar(nota) {
+    console.log('Avaliação:', nota);
+  }
+</script>
+
 </body>
 </html>
