@@ -22,13 +22,13 @@ overflow:hidden;
 /* ENGRENAGEM FIXA */
 .config-btn{
 position:fixed;
-top:20px;
-right:20px;
+top:15px;
+right:15px;
 background:none;
 border:none;
 font-size:24px;
 cursor:pointer;
-z-index:999;
+z-index:9999;
 }
 
 /* CARD */
@@ -38,12 +38,14 @@ backdrop-filter:blur(15px);
 padding:30px;
 border-radius:20px;
 width:90%;
-max-width:380px;
+max-width:400px;
 text-align:center;
 display:none;
 }
 
 .card.active{display:block}
+
+h1,h2{margin:10px 0}
 
 input{
 width:100%;
@@ -51,7 +53,7 @@ padding:14px;
 border:none;
 border-radius:12px;
 margin:15px 0;
-font-size:16px;
+font-size:18px;
 }
 
 button{
@@ -73,44 +75,19 @@ margin:15px 0;
 font-weight:bold;
 }
 
-.codigo{
+.timer{
 margin-top:10px;
 font-size:14px;
 opacity:.9;
 }
 
-.timer{
-margin-top:10px;
-font-size:14px;
-opacity:.8;
-}
-
-/* AVALIAÇÃO */
-.emoji-box{
-display:flex;
-justify-content:space-between;
-margin-top:20px;
-font-size:30px;
-cursor:pointer;
-}
-
-/* MODAL */
-.modal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.6);
-display:none;
-justify-content:center;
-align-items:center;
-}
-
-.modal-box{
-background:#2a024f;
-padding:25px;
-border-radius:20px;
-width:90%;
-max-width:350px;
-text-align:center;
+.pix-box img{
+margin-top:15px;
+width:200px;
+height:200px;
+background:#fff;
+padding:10px;
+border-radius:12px;
 }
 </style>
 </head>
@@ -119,14 +96,22 @@ text-align:center;
 
 <button class="config-btn" onclick="abrirSenha()">⚙</button>
 
-<!-- TELA 1 -->
+<!-- TELA 1 TELEFONE -->
 <div class="card active" id="t1">
 <h1 id="tituloLoja">Rochas Açaí – Unidade Ilha 9</h1>
-<input id="telefone" placeholder="Digite seu telefone">
+
+<input 
+id="telefone"
+type="tel"
+inputmode="numeric"
+pattern="[0-9]*"
+placeholder="Digite seu telefone"
+/>
+
 <button onclick="irPeso()">Continuar</button>
 </div>
 
-<!-- TELA 2 -->
+<!-- TELA 2 PESO -->
 <div class="card" id="t2">
 <h2>Coloque o pote na balança</h2>
 <div class="valor" id="peso">0 g</div>
@@ -134,31 +119,30 @@ text-align:center;
 <button onclick="irPagamento()">Continuar</button>
 </div>
 
-<!-- TELA 3 -->
+<!-- TELA 3 ESCOLHA PAGAMENTO -->
 <div class="card" id="t3">
-<h2>Pague na maquininha</h2>
-<div class="valor" id="valor">R$ 0,00</div>
-<div class="codigo" id="codigoVenda"></div>
+<h2>Escolha a forma de pagamento</h2>
+<div class="valor" id="valor"></div>
+<button onclick="pagarPix()">Pagar com PIX</button>
+<button onclick="pagarCartao()">Pagar com Cartão</button>
+</div>
+
+<!-- TELA PIX -->
+<div class="card" id="tPix">
+<h2>Escaneie o QR Code</h2>
+<div class="valor" id="valorPix"></div>
+<div class="pix-box">
+<img id="qrCode">
+</div>
+<button onclick="confirmar()">Já paguei</button>
+</div>
+
+<!-- TELA CARTÃO -->
+<div class="card" id="tCartao">
+<h2>Pague na maquininha ao lado</h2>
+<div class="valor" id="valorCartao"></div>
 <div class="timer" id="timer"></div>
 <button onclick="confirmar()">Pagamento confirmado</button>
-</div>
-
-<!-- TELA 4 -->
-<div class="card" id="t4">
-<h2>Pagamento confirmado ✅</h2>
-<p>Obrigado pela preferência!</p>
-</div>
-
-<!-- TELA 5 -->
-<div class="card" id="t5">
-<h2>Avalie nosso atendimento</h2>
-<div class="emoji-box">
-<span onclick="avaliar('😡')">😡</span>
-<span onclick="avaliar('😕')">😕</span>
-<span onclick="avaliar('😐')">😐</span>
-<span onclick="avaliar('🙂')">🙂</span>
-<span onclick="avaliar('😍')">😍</span>
-</div>
 </div>
 
 <script>
@@ -174,22 +158,23 @@ document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
-/* Tela 1 -> 2 */
+/* Telefone -> Peso */
 function irPeso(){
-if(document.getElementById("telefone").value.length < 8){
+let tel = document.getElementById("telefone").value;
+if(tel.length < 8){
 alert("Digite um telefone válido");
 return;
 }
 trocar("t2");
 }
 
-/* Simula peso */
+/* Simular peso */
 function simularPeso(){
 pesoAtual = Math.floor(Math.random()*500)+150;
 document.getElementById("peso").innerText = pesoAtual + " g";
 }
 
-/* Tela 2 -> 3 */
+/* Peso -> Escolha */
 function irPagamento(){
 if(pesoAtual===0){
 alert("Simule o peso primeiro");
@@ -200,26 +185,48 @@ let valor = (pesoAtual/1000 * valorKg).toFixed(2);
 document.getElementById("valor").innerText = "R$ " + valor;
 
 codigoAtual = "RA" + Date.now();
-document.getElementById("codigoVenda").innerText = "Código: " + codigoAtual;
-
 trocar("t3");
+}
+
+/* PIX */
+function pagarPix(){
+let valor = (pesoAtual/1000 * valorKg).toFixed(2);
+
+document.getElementById("valorPix").innerText = "R$ " + valor;
+
+/* QR CODE PIX SIMPLES (simulado) */
+let pixString = "Pagamento Rochas Açaí R$"+valor+" Código:"+codigoAtual;
+
+document.getElementById("qrCode").src =
+"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="
++ encodeURIComponent(pixString);
+
+trocar("tPix");
+}
+
+/* CARTÃO */
+function pagarCartao(){
+let valor = (pesoAtual/1000 * valorKg).toFixed(2);
+document.getElementById("valorCartao").innerText = "R$ " + valor;
+
+trocar("tCartao");
 iniciarTimer();
 }
 
-/* TIMER 30 SEG */
+/* TIMER */
 function iniciarTimer(){
 let tempo = 30;
 document.getElementById("timer").innerText =
-"Tempo restante: " + tempo + "s";
+"Tempo restante: "+tempo+"s";
 
 timerInterval = setInterval(()=>{
 tempo--;
 document.getElementById("timer").innerText =
-"Tempo restante: " + tempo + "s";
+"Tempo restante: "+tempo+"s";
 
 if(tempo<=0){
 clearInterval(timerInterval);
-alert("Tempo expirado. Operação cancelada.");
+alert("Tempo expirado.");
 location.reload();
 }
 },1000);
@@ -242,31 +249,24 @@ let vendas = JSON.parse(localStorage.getItem("vendas")||"[]");
 vendas.push(venda);
 localStorage.setItem("vendas",JSON.stringify(vendas));
 
-trocar("t4");
-
-setTimeout(()=>{
-trocar("t5");
-},2000);
-}
-
-/* Avaliação */
-function avaliar(emoji){
-let vendas = JSON.parse(localStorage.getItem("vendas"));
-vendas[vendas.length-1].avaliacao = emoji;
-localStorage.setItem("vendas",JSON.stringify(vendas));
-
-setTimeout(()=>{
+alert("Pagamento registrado com sucesso!");
 location.reload();
-},1500);
 }
 
-/* CONFIG */
+/* CONFIGURAÇÃO */
 function abrirSenha(){
 let senha = prompt("Digite a senha:");
 if(senha==="1951"){
-alert("Configuração disponível na próxima versão completa.");
+let novoTitulo = prompt("Novo título:");
+if(novoTitulo){
+localStorage.setItem("titulo",novoTitulo);
+document.getElementById("tituloLoja").innerText = novoTitulo;
 }
 }
+}
+
+document.getElementById("tituloLoja").innerText =
+localStorage.getItem("titulo") || "Rochas Açaí – Unidade Ilha 9";
 
 </script>
 
