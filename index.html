@@ -19,23 +19,23 @@ color:#fff;
 overflow:hidden;
 }
 
-/* ENGRENAGEM FIXA DIREITA */
+/* ENGRENAGEM SOMENTE NA TELA INICIAL */
 .config-btn{
-position:fixed;
+position:absolute;
 top:15px;
 right:15px;
 background:none;
 border:none;
 font-size:26px;
 cursor:pointer;
-z-index:9999;
 }
 
 /* CARD */
 .card{
+position:relative;
 background:rgba(255,255,255,0.08);
 backdrop-filter:blur(15px);
-padding:30px;
+padding:35px;
 border-radius:20px;
 width:90%;
 max-width:400px;
@@ -70,7 +70,7 @@ cursor:pointer;
 }
 
 .valor{
-font-size:40px;
+font-size:42px;
 margin:15px 0;
 font-weight:bold;
 }
@@ -95,7 +95,7 @@ font-size:30px;
 cursor:pointer;
 }
 
-/* MODAL CONFIG */
+/* MODAL */
 .modal{
 position:fixed;
 inset:0;
@@ -123,10 +123,10 @@ color:#000;
 
 <body>
 
+<!-- TELA 1 -->
+<div class="card active" id="t1">
 <button class="config-btn" onclick="abrirSenha()">⚙</button>
 
-<!-- TELA 1 TELEFONE -->
-<div class="card active" id="t1">
 <h1 id="tituloLoja">Rochas Açaí – Unidade Ilha 9</h1>
 
 <input 
@@ -140,7 +140,7 @@ placeholder="Digite seu telefone"
 <button onclick="irPeso()">Continuar</button>
 </div>
 
-<!-- TELA 2 PESO -->
+<!-- TELA 2 -->
 <div class="card" id="t2">
 <h2>Coloque o pote na balança</h2>
 <div class="valor" id="peso">0 g</div>
@@ -148,7 +148,7 @@ placeholder="Digite seu telefone"
 <button onclick="irPagamento()">Continuar</button>
 </div>
 
-<!-- TELA 3 PAGAMENTO -->
+<!-- TELA 3 -->
 <div class="card" id="t3">
 <h2>Pague na maquininha ao lado</h2>
 <div class="valor" id="valor"></div>
@@ -157,7 +157,7 @@ placeholder="Digite seu telefone"
 <button onclick="confirmar()">Já paguei</button>
 </div>
 
-<!-- TELA 4 AVALIAÇÃO -->
+<!-- TELA 4 -->
 <div class="card" id="t4">
 <h2>Avalie nosso atendimento</h2>
 <div class="emoji-box">
@@ -174,7 +174,7 @@ placeholder="Digite seu telefone"
 <div class="modal-box">
 <h3>Configurações</h3>
 <input id="confTitulo" placeholder="Novo título">
-<input id="confKg" placeholder="Valor do KG">
+<input id="confKg" placeholder="Valor do KG (ex: 59.90)">
 <button onclick="salvarConfig()">Salvar</button>
 <button onclick="fecharModal()">Fechar</button>
 </div>
@@ -183,11 +183,11 @@ placeholder="Digite seu telefone"
 <script>
 
 let pesoAtual = 0;
-let valorKg = localStorage.getItem("kg") || 59.90;
+let valorKg = parseFloat(localStorage.getItem("kg")) || 59.90;
 let codigoAtual = "";
 let timerInterval;
 
-/* Carregar título salvo */
+/* Carregar título */
 document.getElementById("tituloLoja").innerText =
 localStorage.getItem("titulo") || "Rochas Açaí – Unidade Ilha 9";
 
@@ -220,10 +220,12 @@ alert("Simule o peso primeiro");
 return;
 }
 
-let valor = (pesoAtual/1000 * valorKg).toFixed(2);
+let valor = (pesoAtual/1000 * parseFloat(valorKg)).toFixed(2);
+
 document.getElementById("valor").innerText = "R$ " + valor;
 
 codigoAtual = "RA" + Date.now();
+
 document.getElementById("codigoVenda").innerText =
 "Código: " + codigoAtual;
 
@@ -231,22 +233,20 @@ trocar("t3");
 iniciarTimer();
 }
 
-/* TIMER 30s */
+/* TIMER */
 function iniciarTimer(){
 let tempo = 30;
-
 document.getElementById("timer").innerText =
 "Tempo restante: "+tempo+"s";
 
 timerInterval = setInterval(()=>{
 tempo--;
-
 document.getElementById("timer").innerText =
 "Tempo restante: "+tempo+"s";
 
 if(tempo<=0){
 clearInterval(timerInterval);
-alert("Tempo expirado. Operação cancelada.");
+alert("Tempo expirado");
 location.reload();
 }
 },1000);
@@ -254,7 +254,6 @@ location.reload();
 
 /* Confirmar pagamento */
 function confirmar(){
-
 clearInterval(timerInterval);
 
 let venda = {
@@ -274,7 +273,6 @@ trocar("t4");
 
 /* Avaliação */
 function avaliar(emoji){
-
 let vendas = JSON.parse(localStorage.getItem("vendas"));
 vendas[vendas.length-1].avaliacao = emoji;
 localStorage.setItem("vendas",JSON.stringify(vendas));
@@ -294,14 +292,14 @@ document.getElementById("modal").style.display="flex";
 
 function salvarConfig(){
 let novoTitulo=document.getElementById("confTitulo").value;
-let novoKg=document.getElementById("confKg").value;
+let novoKg=parseFloat(document.getElementById("confKg").value);
 
 if(novoTitulo){
 localStorage.setItem("titulo",novoTitulo);
 document.getElementById("tituloLoja").innerText=novoTitulo;
 }
 
-if(novoKg){
+if(!isNaN(novoKg)){
 localStorage.setItem("kg",novoKg);
 valorKg=novoKg;
 }
