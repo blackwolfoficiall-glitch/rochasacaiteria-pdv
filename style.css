@@ -1,28 +1,27 @@
 * {
   box-sizing: border-box;
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 body {
   margin: 0;
-  background: linear-gradient(160deg, #2b0a3d, #5a189a);
-  color: #fff;
-  height: 100vh;
+  background: #f5f5f5;
 }
 
-#app {
-  max-width: 500px;
+.container {
   height: 100vh;
-  margin: 0 auto;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
 .tela {
   display: none;
-  width: 100%;
-  padding: 40px 25px;
+  background: #fff;
+  padding: 30px;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 10px;
   text-align: center;
 }
 
@@ -30,57 +29,26 @@ body {
   display: block;
 }
 
-h1, h2 {
-  font-size: 32px;
-  margin-bottom: 20px;
-}
-
-p {
-  font-size: 20px;
-  margin: 10px 0;
-  opacity: 0.9;
-}
-
-.valor-grande {
-  font-size: 42px;
-  font-weight: bold;
-  margin: 20px 0;
+input {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  margin: 15px 0;
 }
 
 button {
   width: 100%;
-  padding: 20px;
-  font-size: 22px;
-  font-weight: bold;
+  padding: 15px;
+  font-size: 18px;
+  margin-top: 10px;
   border: none;
-  border-radius: 12px;
-  margin-top: 20px;
-  background: #ffd60a;
-  color: #2b0a3d;
-}
-
-button.secundario {
-  background: rgba(255,255,255,0.15);
+  border-radius: 5px;
+  background: #2ecc71;
   color: #fff;
 }
 
-input {
-  width: 100%;
-  padding: 18px;
-  font-size: 22px;
-  text-align: center;
-  border-radius: 12px;
-  border: none;
-  margin-top: 20px;
-}
-
-.emojis {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 40px;
-}
-
-.emojis span {
-  font-size: 64px;
-  cursor: pointer;
+.avaliacao button {
+  width: 18%;
+  font-size: 28px;
+  background: none;
 }
