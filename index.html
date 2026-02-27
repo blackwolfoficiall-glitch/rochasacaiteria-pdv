@@ -41,6 +41,14 @@ body {
   display: block;
 }
 
+.titulo-loja {
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #5a189a;
+  font-size: 22px;
+  font-weight: bold;
+}
+
 h1 {
   margin-top: 0;
   color: #5a189a;
@@ -48,20 +56,7 @@ h1 {
 
 p {
   color: #555;
-}
-
-.titulo-loja {
-  margin-bottom: 5px;
-  color: #5a189a;
-  font-size: 28px;
-}
-
-.subtitulo-loja {
-  margin-top: 0;
-  margin-bottom: 20px;
   font-size: 16px;
-  color: #777;
-  font-weight: normal;
 }
 
 input {
@@ -112,17 +107,16 @@ h2 {
 
 <div class="container">
 
-  <!-- PASSO 1 - TELEFONE -->
+  <!-- PASSO 1 -->
   <div class="tela ativa" id="telaTelefone">
-    <h1 class="titulo-loja">Rochas Açaí</h1>
-    <h2 class="subtitulo-loja">Unidade Ilha 9</h2>
+    <div class="titulo-loja">Rochas Açaí – Unidade Ilha 9</div>
 
     <p>Digite seu telefone</p>
     <input type="tel" id="telefone" placeholder="DDD + número">
     <button onclick="irParaPeso()">Continuar</button>
   </div>
 
-  <!-- PASSO 2 - PESO -->
+  <!-- PASSO 2 -->
   <div class="tela" id="telaPeso">
     <h1>Coloque o pote na balança</h1>
     <p>Peso atual</p>
@@ -131,15 +125,15 @@ h2 {
     <button onclick="irParaPagamento()">Continuar</button>
   </div>
 
-  <!-- PASSO 3 - PAGAMENTO -->
+  <!-- PASSO 3 -->
   <div class="tela" id="telaPagamento">
-    <h1>Pagamento</h1>
+    <h1>Pague na maquininha agora</h1>
     <p>Valor a pagar</p>
     <h2 id="valor">R$ 0,00</h2>
     <button onclick="confirmarPagamento()">Pagamento confirmado</button>
   </div>
 
-  <!-- PASSO 4 - AVALIAÇÃO -->
+  <!-- PASSO 4 -->
   <div class="tela" id="telaAvaliacao">
     <h1>Avalie o atendimento</h1>
     <div class="avaliacao">
