@@ -23,22 +23,32 @@ color:#fff;
 overflow:hidden;
 }
 
-/* ENGRENAGEM FIXA DEFINITIVA */
-.config-btn{
+/* ===== ENGRENAGEM FIXA DEFINITIVA ===== */
+.config-wrapper{
 position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+z-index:9999;
+}
+
+.config-btn{
+position:absolute;
 top:20px;
 right:20px;
 background:none;
 border:none;
 font-size:26px;
 cursor:pointer;
-z-index:9999;
+pointer-events:auto;
 display:none;
+color:#fff;
 }
 
-/* CARD PADRÃO */
+/* ===== CARDS ===== */
 .card{
-position:relative;
 background:rgba(255,255,255,0.08);
 backdrop-filter:blur(15px);
 padding:35px;
@@ -105,7 +115,7 @@ font-size:30px;
 cursor:pointer;
 }
 
-/* MODAL CONFIG */
+/* ===== MODAL ===== */
 .modal{
 position:fixed;
 inset:0;
@@ -134,8 +144,10 @@ margin-bottom:10px;
 
 <body>
 
-<!-- ENGRENAGEM FORA DOS CARDS -->
+<!-- ENGRENAGEM FORA DO FLEX -->
+<div class="config-wrapper">
 <button class="config-btn" id="engrenagem" onclick="abrirSenha()">⚙</button>
+</div>
 
 <!-- TELA 1 -->
 <div class="card active" id="t1">
@@ -203,12 +215,12 @@ let timerInterval;
 document.getElementById("tituloLoja").innerText =
 localStorage.getItem("titulo") || "Rochas Açaí – Unidade Ilha 9";
 
-/* Função trocar tela */
+/* Trocar tela */
 function trocar(id){
 document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 
-/* Mostrar engrenagem só na tela inicial */
+/* Mostrar engrenagem apenas na tela inicial */
 if(id === "t1"){
 document.getElementById("engrenagem").style.display = "block";
 }else{
@@ -216,7 +228,7 @@ document.getElementById("engrenagem").style.display = "none";
 }
 }
 
-/* Inicializar sistema */
+/* Inicializa */
 trocar("t1");
 
 /* Telefone -> Peso */
@@ -253,9 +265,10 @@ trocar("t3");
 iniciarTimer();
 }
 
-/* TIMER 30s */
+/* Timer */
 function iniciarTimer(){
 let tempo = 30;
+
 document.getElementById("timer").innerText =
 "Tempo restante: "+tempo+"s";
 
@@ -302,7 +315,7 @@ location.reload();
 },1500);
 }
 
-/* CONFIG */
+/* Config */
 function abrirSenha(){
 let senha = prompt("Digite a senha:");
 if(senha==="1951"){
