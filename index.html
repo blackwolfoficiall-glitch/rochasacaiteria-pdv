@@ -19,15 +19,16 @@ color:#fff;
 overflow:hidden;
 }
 
-/* ENGRENAGEM */
+/* ENGRENAGEM FIXA */
 .config-btn{
 position:fixed;
-top:15px;
-right:15px;
+top:20px;
+right:20px;
 background:none;
 border:none;
-font-size:26px;
+font-size:24px;
 cursor:pointer;
+z-index:999;
 }
 
 /* CARD */
@@ -43,8 +44,6 @@ display:none;
 }
 
 .card.active{display:block}
-
-h1,h2{margin:10px 0}
 
 input{
 width:100%;
@@ -80,6 +79,12 @@ font-size:14px;
 opacity:.9;
 }
 
+.timer{
+margin-top:10px;
+font-size:14px;
+opacity:.8;
+}
+
 /* AVALIAÇÃO */
 .emoji-box{
 display:flex;
@@ -89,7 +94,7 @@ font-size:30px;
 cursor:pointer;
 }
 
-/* MODAL CONFIG */
+/* MODAL */
 .modal{
 position:fixed;
 inset:0;
@@ -134,6 +139,7 @@ text-align:center;
 <h2>Pague na maquininha</h2>
 <div class="valor" id="valor">R$ 0,00</div>
 <div class="codigo" id="codigoVenda"></div>
+<div class="timer" id="timer"></div>
 <button onclick="confirmar()">Pagamento confirmado</button>
 </div>
 
@@ -143,7 +149,7 @@ text-align:center;
 <p>Obrigado pela preferência!</p>
 </div>
 
-<!-- TELA 5 AVALIAÇÃO -->
+<!-- TELA 5 -->
 <div class="card" id="t5">
 <h2>Avalie nosso atendimento</h2>
 <div class="emoji-box">
@@ -155,34 +161,20 @@ text-align:center;
 </div>
 </div>
 
-<!-- CONFIG -->
-<div class="modal" id="modal">
-<div class="modal-box">
-<h3>Configurações</h3>
-<input id="confTitulo" placeholder="Novo título">
-<input id="confKg" placeholder="Valor do KG">
-<button onclick="salvarConfig()">Salvar</button>
-<button onclick="fecharModal()">Fechar</button>
-</div>
-</div>
-
 <script>
 
 let pesoAtual = 0;
 let valorKg = localStorage.getItem("kg") || 59.90;
 let codigoAtual = "";
+let timerInterval;
 
-/* Carregar título salvo */
-document.getElementById("tituloLoja").innerText =
-localStorage.getItem("titulo") || "Rochas Açaí – Unidade Ilha 9";
-
-/* Trocar tela */
+/* Troca tela */
 function trocar(id){
 document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
-/* Ir para peso */
+/* Tela 1 -> 2 */
 function irPeso(){
 if(document.getElementById("telefone").value.length < 8){
 alert("Digite um telefone válido");
@@ -191,13 +183,13 @@ return;
 trocar("t2");
 }
 
-/* Simular peso */
+/* Simula peso */
 function simularPeso(){
 pesoAtual = Math.floor(Math.random()*500)+150;
 document.getElementById("peso").innerText = pesoAtual + " g";
 }
 
-/* Ir para pagamento */
+/* Tela 2 -> 3 */
 function irPagamento(){
 if(pesoAtual===0){
 alert("Simule o peso primeiro");
@@ -207,15 +199,36 @@ return;
 let valor = (pesoAtual/1000 * valorKg).toFixed(2);
 document.getElementById("valor").innerText = "R$ " + valor;
 
-/* GERAR CÓDIGO */
 codigoAtual = "RA" + Date.now();
 document.getElementById("codigoVenda").innerText = "Código: " + codigoAtual;
 
 trocar("t3");
+iniciarTimer();
+}
+
+/* TIMER 30 SEG */
+function iniciarTimer(){
+let tempo = 30;
+document.getElementById("timer").innerText =
+"Tempo restante: " + tempo + "s";
+
+timerInterval = setInterval(()=>{
+tempo--;
+document.getElementById("timer").innerText =
+"Tempo restante: " + tempo + "s";
+
+if(tempo<=0){
+clearInterval(timerInterval);
+alert("Tempo expirado. Operação cancelada.");
+location.reload();
+}
+},1000);
 }
 
 /* Confirmar pagamento */
 function confirmar(){
+
+clearInterval(timerInterval);
 
 let venda = {
 codigo: codigoAtual,
@@ -238,7 +251,6 @@ trocar("t5");
 
 /* Avaliação */
 function avaliar(emoji){
-
 let vendas = JSON.parse(localStorage.getItem("vendas"));
 vendas[vendas.length-1].avaliacao = emoji;
 localStorage.setItem("vendas",JSON.stringify(vendas));
@@ -252,29 +264,8 @@ location.reload();
 function abrirSenha(){
 let senha = prompt("Digite a senha:");
 if(senha==="1951"){
-document.getElementById("modal").style.display="flex";
+alert("Configuração disponível na próxima versão completa.");
 }
-}
-
-function salvarConfig(){
-let novoTitulo=document.getElementById("confTitulo").value;
-let novoKg=document.getElementById("confKg").value;
-
-if(novoTitulo){
-localStorage.setItem("titulo",novoTitulo);
-document.getElementById("tituloLoja").innerText=novoTitulo;
-}
-
-if(novoKg){
-localStorage.setItem("kg",novoKg);
-valorKg=novoKg;
-}
-
-alert("Salvo com sucesso!");
-}
-
-function fecharModal(){
-document.getElementById("modal").style.display="none";
 }
 
 </script>
