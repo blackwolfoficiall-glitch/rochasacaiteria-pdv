@@ -1,81 +1,58 @@
-let pesoAtual = 0;
-let precoPorGrama = 0.05; // ajuste depois (ex: 5 centavos por grama)
-let timeoutReset = null;
+let peso = 0;
+let valorKg = localStorage.getItem("kg") || 49.90;
+let vendas = JSON.parse(localStorage.getItem("vendas") || "[]");
 
-// utilitário para trocar telas
-function mostrarTela(id) {
-  document.querySelectorAll(".tela").forEach(tela => {
-    tela.classList.remove("ativa");
-  });
+document.getElementById("tituloLoja").innerText =
+  localStorage.getItem("titulo") || "Rochas Açaí – Unidade Ilha 9";
 
-  const tela = document.getElementById(id);
-  if (tela) {
-    tela.classList.add("ativa");
-  }
+function trocar(id) {
+  document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+  document.getElementById(id).classList.add("ativa");
 }
 
-// PASSO 1 → PASSO 2
-function irParaPeso() {
-  const telefone = document.getElementById("telefone").value.trim();
+function irPeso() { trocar("t2"); }
 
-  if (telefone.length < 8) {
-    alert("Digite um telefone válido");
-    return;
-  }
-
-  mostrarTela("telaPeso");
-}
-
-// SIMULA LEITURA DA BALANÇA
 function simularPeso() {
-  pesoAtual = Math.floor(Math.random() * 800) + 200; // 200g a 1000g
-  document.getElementById("peso").innerText = pesoAtual + " g";
-
-  const valor = pesoAtual * precoPorGrama;
-  document.getElementById("valor").innerText =
-    "R$ " + valor.toFixed(2).replace(".", ",");
+  peso = Math.floor(Math.random() * 500) + 100;
+  document.getElementById("peso").innerText = peso + " g";
 }
 
-// PASSO 2 → PASSO 3
-function irParaPagamento() {
-  if (pesoAtual === 0) {
-    alert("Coloque o pote na balança");
-    return;
-  }
-
-  mostrarTela("telaPagamento");
-
-  // segurança: se não confirmar em 30s, reseta
-  timeoutReset = setTimeout(resetSistema, 30000);
+function irPagamento() {
+  let valor = (peso / 1000 * valorKg).toFixed(2);
+  document.getElementById("valor").innerText = "R$ " + valor;
+  trocar("t3");
 }
 
-// CONFIRMA PAGAMENTO (MANUAL)
 function confirmarPagamento() {
-  if (timeoutReset) clearTimeout(timeoutReset);
-
-  mostrarTela("telaAvaliacao");
-
-  // após 3 segundos, volta para o início
-  setTimeout(resetSistema, 3000);
+  let venda = {
+    id: "RA-" + Date.now(),
+    telefone: document.getElementById("telefone").value,
+    peso,
+    valor: (peso / 1000 * valorKg).toFixed(2),
+    data: new Date().toLocaleString()
+  };
+  vendas.push(venda);
+  localStorage.setItem("vendas", JSON.stringify(vendas));
+  trocar("t4");
 }
 
-// AVALIAÇÃO
-function avaliar(nota) {
-  console.log("Avaliação:", nota);
+function avaliar() {
+  setTimeout(() => location.reload(), 2000);
 }
 
-// RESET GERAL
-function resetSistema() {
-  pesoAtual = 0;
-
-  document.getElementById("telefone").value = "";
-  document.getElementById("peso").innerText = "0 g";
-  document.getElementById("valor").innerText = "R$ 0,00";
-
-  mostrarTela("telaTelefone");
+/* CONFIG */
+function abrirSenha() {
+  if (prompt("Senha:") === "1951") {
+    document.getElementById("modal").style.display = "flex";
+  }
 }
 
-// GARANTIA DE INICIALIZAÇÃO
-document.addEventListener("DOMContentLoaded", () => {
-  mostrarTela("telaTelefone");
-});
+function salvarConfig() {
+  localStorage.setItem("titulo", document.getElementById("confTitulo").value);
+  localStorage.setItem("kg", document.getElementById("confKg").value);
+  alert("Salvo!");
+}
+
+function fecharModal() {
+  document.getElementById("modal").style.display = "none";
+}
