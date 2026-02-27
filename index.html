@@ -7,7 +7,6 @@
 
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-
 body{
 margin:0;
 height:100vh;
@@ -17,19 +16,19 @@ justify-content:center;
 align-items:center;
 color:#fff;
 }
-
+.container{
+width:90%;
+max-width:380px;
+}
 .card{
 background:rgba(255,255,255,0.08);
 backdrop-filter:blur(10px);
 padding:30px;
 border-radius:20px;
-width:90%;
-max-width:380px;
 text-align:center;
+display:none;
 }
-
-h1{margin-bottom:20px}
-
+.card.active{display:block}
 input{
 width:100%;
 padding:15px;
@@ -38,7 +37,6 @@ border-radius:12px;
 margin:15px 0;
 font-size:16px;
 }
-
 button{
 width:100%;
 padding:15px;
@@ -49,9 +47,10 @@ color:#fff;
 font-size:18px;
 margin-top:12px;
 }
-
-.hidden{display:none}
-
+.valor{
+font-size:36px;
+margin:20px 0;
+}
 .config-btn{
 position:fixed;
 top:20px;
@@ -70,11 +69,71 @@ font-size:20px;
 
 <button class="config-btn">⚙️</button>
 
-<div class="card">
+<div class="container">
+
+<div class="card active" id="t1">
 <h1>Rochas Açaí – Unidade Ilha 9</h1>
-<input placeholder="Digite seu telefone">
-<button>Continuar</button>
+<input id="telefone" placeholder="Digite seu telefone">
+<button onclick="irPeso()">Continuar</button>
 </div>
+
+<div class="card" id="t2">
+<h2>Peso atual</h2>
+<div class="valor" id="peso">0 g</div>
+<button onclick="simularPeso()">Simular peso</button>
+<button onclick="irPagamento()">Continuar</button>
+</div>
+
+<div class="card" id="t3">
+<h2>Valor a pagar</h2>
+<div class="valor" id="valor">R$ 0,00</div>
+<button onclick="confirmar()">Pagamento confirmado</button>
+</div>
+
+<div class="card" id="t4">
+<h2>Obrigado!</h2>
+<p>Voltando para o início...</p>
+</div>
+
+</div>
+
+<script>
+let pesoAtual = 0;
+let valorKg = 49.90;
+
+function trocar(id){
+document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+function irPeso(){
+if(document.getElementById("telefone").value.length < 8){
+alert("Digite um telefone válido");
+return;
+}
+trocar("t2");
+}
+
+function simularPeso(){
+pesoAtual = Math.floor(Math.random()*500)+100;
+document.getElementById("peso").innerText = pesoAtual + " g";
+}
+
+function irPagamento(){
+if(pesoAtual === 0){
+alert("Simule o peso primeiro");
+return;
+}
+let valor = (pesoAtual/1000 * valorKg).toFixed(2);
+document.getElementById("valor").innerText = "R$ " + valor;
+trocar("t3");
+}
+
+function confirmar(){
+trocar("t4");
+setTimeout(()=>location.reload(),3000);
+}
+</script>
 
 </body>
 </html>
