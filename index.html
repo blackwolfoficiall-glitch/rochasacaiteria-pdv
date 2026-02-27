@@ -7,6 +7,7 @@
 
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
+
 body{
 margin:0;
 height:100vh;
@@ -16,19 +17,32 @@ justify-content:center;
 align-items:center;
 color:#fff;
 }
-.container{
-width:90%;
-max-width:380px;
+
+/* ÍCONE CONFIG */
+.config-btn{
+position:fixed;
+top:20px;
+right:20px;
+background:none;
+border:none;
+font-size:28px;
+cursor:pointer;
 }
+
+/* CARD */
 .card{
 background:rgba(255,255,255,0.08);
-backdrop-filter:blur(10px);
+backdrop-filter:blur(12px);
 padding:30px;
 border-radius:20px;
+width:90%;
+max-width:380px;
 text-align:center;
 display:none;
 }
+
 .card.active{display:block}
+
 input{
 width:100%;
 padding:15px;
@@ -37,46 +51,58 @@ border-radius:12px;
 margin:15px 0;
 font-size:16px;
 }
+
 button{
 width:100%;
 padding:15px;
 border:none;
 border-radius:14px;
-background:linear-gradient(135deg,#9b5cff,#c77dff);
-color:#fff;
+background:#ffd60a;
+color:#000;
 font-size:18px;
 margin-top:12px;
+font-weight:bold;
 }
+
 .valor{
 font-size:36px;
 margin:20px 0;
+font-weight:bold;
 }
-.config-btn{
+
+/* MODAL */
+.modal{
 position:fixed;
-top:20px;
-right:20px;
-width:50px;
-height:50px;
-border-radius:50%;
-border:none;
-background:linear-gradient(135deg,#9b5cff,#c77dff);
-font-size:20px;
+inset:0;
+background:rgba(0,0,0,.6);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal-box{
+background:#2a024f;
+padding:25px;
+border-radius:20px;
+width:90%;
+max-width:350px;
+text-align:center;
 }
 </style>
 </head>
 
 <body>
 
-<button class="config-btn">⚙️</button>
+<button class="config-btn" onclick="abrirSenha()">⚙</button>
 
-<div class="container">
-
+<!-- TELA 1 -->
 <div class="card active" id="t1">
-<h1>Rochas Açaí – Unidade Ilha 9</h1>
+<h1 id="tituloLoja">Rochas Açaí – Unidade Ilha 9</h1>
 <input id="telefone" placeholder="Digite seu telefone">
 <button onclick="irPeso()">Continuar</button>
 </div>
 
+<!-- TELA 2 -->
 <div class="card" id="t2">
 <h2>Peso atual</h2>
 <div class="valor" id="peso">0 g</div>
@@ -84,28 +110,48 @@ font-size:20px;
 <button onclick="irPagamento()">Continuar</button>
 </div>
 
+<!-- TELA 3 -->
 <div class="card" id="t3">
 <h2>Valor a pagar</h2>
 <div class="valor" id="valor">R$ 0,00</div>
+<div id="codigoVenda"></div>
 <button onclick="confirmar()">Pagamento confirmado</button>
 </div>
 
+<!-- TELA 4 -->
 <div class="card" id="t4">
 <h2>Obrigado!</h2>
 <p>Voltando para o início...</p>
 </div>
 
+<!-- MODAL CONFIG -->
+<div class="modal" id="modal">
+<div class="modal-box">
+<h3>Configurações</h3>
+<input id="confTitulo" placeholder="Novo título">
+<input id="confKg" placeholder="Valor do KG">
+<button onclick="salvarConfig()">Salvar</button>
+<button onclick="fecharModal()">Fechar</button>
+</div>
 </div>
 
 <script>
-let pesoAtual = 0;
-let valorKg = 49.90;
 
+let pesoAtual = 0;
+let valorKg = localStorage.getItem("kg") || 49.90;
+let codigoAtual = "";
+
+/* Carrega título salvo */
+document.getElementById("tituloLoja").innerText =
+localStorage.getItem("titulo") || "Rochas Açaí – Unidade Ilha 9";
+
+/* Troca de tela */
 function trocar(id){
 document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
+/* Tela 1 -> Tela 2 */
 function irPeso(){
 if(document.getElementById("telefone").value.length < 8){
 alert("Digite um telefone válido");
@@ -114,25 +160,81 @@ return;
 trocar("t2");
 }
 
+/* Simula peso */
 function simularPeso(){
 pesoAtual = Math.floor(Math.random()*500)+100;
 document.getElementById("peso").innerText = pesoAtual + " g";
 }
 
+/* Tela 2 -> Tela 3 */
 function irPagamento(){
 if(pesoAtual === 0){
 alert("Simule o peso primeiro");
 return;
 }
+
 let valor = (pesoAtual/1000 * valorKg).toFixed(2);
 document.getElementById("valor").innerText = "R$ " + valor;
+
+/* GERA CÓDIGO ÚNICO */
+codigoAtual = "RA" + Date.now();
+document.getElementById("codigoVenda").innerHTML =
+"<p>Código: <strong>" + codigoAtual + "</strong></p>";
+
 trocar("t3");
 }
 
+/* Confirma pagamento */
 function confirmar(){
+
+let venda = {
+codigo: codigoAtual,
+telefone: document.getElementById("telefone").value,
+peso: pesoAtual,
+valor: (pesoAtual/1000 * valorKg).toFixed(2),
+data: new Date().toLocaleString()
+};
+
+let vendas = JSON.parse(localStorage.getItem("vendas") || "[]");
+vendas.push(venda);
+localStorage.setItem("vendas", JSON.stringify(vendas));
+
 trocar("t4");
-setTimeout(()=>location.reload(),3000);
+
+setTimeout(()=>{
+location.reload();
+},3000);
 }
+
+/* CONFIG */
+function abrirSenha(){
+let senha = prompt("Digite a senha:");
+if(senha === "1951"){
+document.getElementById("modal").style.display="flex";
+}
+}
+
+function salvarConfig(){
+let novoTitulo = document.getElementById("confTitulo").value;
+let novoKg = document.getElementById("confKg").value;
+
+if(novoTitulo){
+localStorage.setItem("titulo", novoTitulo);
+document.getElementById("tituloLoja").innerText = novoTitulo;
+}
+
+if(novoKg){
+localStorage.setItem("kg", novoKg);
+valorKg = novoKg;
+}
+
+alert("Configurações salvas!");
+}
+
+function fecharModal(){
+document.getElementById("modal").style.display="none";
+}
+
 </script>
 
 </body>
