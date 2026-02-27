@@ -19,14 +19,14 @@ color:#fff;
 overflow:hidden;
 }
 
-/* ENGRENAGEM FIXA */
+/* ENGRENAGEM FIXA DIREITA */
 .config-btn{
 position:fixed;
 top:15px;
 right:15px;
 background:none;
 border:none;
-font-size:24px;
+font-size:26px;
 cursor:pointer;
 z-index:9999;
 }
@@ -70,7 +70,7 @@ cursor:pointer;
 }
 
 .valor{
-font-size:38px;
+font-size:40px;
 margin:15px 0;
 font-weight:bold;
 }
@@ -81,13 +81,42 @@ font-size:14px;
 opacity:.9;
 }
 
-.pix-box img{
-margin-top:15px;
-width:200px;
-height:200px;
+.codigo{
+margin-top:8px;
+font-size:13px;
+opacity:.8;
+}
+
+.emoji-box{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+font-size:30px;
+cursor:pointer;
+}
+
+/* MODAL CONFIG */
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal-box{
+background:#2a024f;
+padding:25px;
+border-radius:20px;
+width:90%;
+max-width:350px;
+text-align:center;
+}
+
+.modal-box input{
 background:#fff;
-padding:10px;
-border-radius:12px;
+color:#000;
 }
 </style>
 </head>
@@ -119,30 +148,36 @@ placeholder="Digite seu telefone"
 <button onclick="irPagamento()">Continuar</button>
 </div>
 
-<!-- TELA 3 ESCOLHA PAGAMENTO -->
+<!-- TELA 3 PAGAMENTO -->
 <div class="card" id="t3">
-<h2>Escolha a forma de pagamento</h2>
+<h2>Pague na maquininha ao lado</h2>
 <div class="valor" id="valor"></div>
-<button onclick="pagarPix()">Pagar com PIX</button>
-<button onclick="pagarCartao()">Pagar com Cartão</button>
-</div>
-
-<!-- TELA PIX -->
-<div class="card" id="tPix">
-<h2>Escaneie o QR Code</h2>
-<div class="valor" id="valorPix"></div>
-<div class="pix-box">
-<img id="qrCode">
-</div>
+<div class="codigo" id="codigoVenda"></div>
+<div class="timer" id="timer"></div>
 <button onclick="confirmar()">Já paguei</button>
 </div>
 
-<!-- TELA CARTÃO -->
-<div class="card" id="tCartao">
-<h2>Pague na maquininha ao lado</h2>
-<div class="valor" id="valorCartao"></div>
-<div class="timer" id="timer"></div>
-<button onclick="confirmar()">Pagamento confirmado</button>
+<!-- TELA 4 AVALIAÇÃO -->
+<div class="card" id="t4">
+<h2>Avalie nosso atendimento</h2>
+<div class="emoji-box">
+<span onclick="avaliar('😡')">😡</span>
+<span onclick="avaliar('😕')">😕</span>
+<span onclick="avaliar('😐')">😐</span>
+<span onclick="avaliar('🙂')">🙂</span>
+<span onclick="avaliar('😍')">😍</span>
+</div>
+</div>
+
+<!-- MODAL CONFIG -->
+<div class="modal" id="modal">
+<div class="modal-box">
+<h3>Configurações</h3>
+<input id="confTitulo" placeholder="Novo título">
+<input id="confKg" placeholder="Valor do KG">
+<button onclick="salvarConfig()">Salvar</button>
+<button onclick="fecharModal()">Fechar</button>
+</div>
 </div>
 
 <script>
@@ -152,7 +187,11 @@ let valorKg = localStorage.getItem("kg") || 59.90;
 let codigoAtual = "";
 let timerInterval;
 
-/* Troca tela */
+/* Carregar título salvo */
+document.getElementById("tituloLoja").innerText =
+localStorage.getItem("titulo") || "Rochas Açaí – Unidade Ilha 9";
+
+/* Trocar tela */
 function trocar(id){
 document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
 document.getElementById(id).classList.add("active");
@@ -174,7 +213,7 @@ pesoAtual = Math.floor(Math.random()*500)+150;
 document.getElementById("peso").innerText = pesoAtual + " g";
 }
 
-/* Peso -> Escolha */
+/* Peso -> Pagamento */
 function irPagamento(){
 if(pesoAtual===0){
 alert("Simule o peso primeiro");
@@ -185,48 +224,29 @@ let valor = (pesoAtual/1000 * valorKg).toFixed(2);
 document.getElementById("valor").innerText = "R$ " + valor;
 
 codigoAtual = "RA" + Date.now();
+document.getElementById("codigoVenda").innerText =
+"Código: " + codigoAtual;
+
 trocar("t3");
-}
-
-/* PIX */
-function pagarPix(){
-let valor = (pesoAtual/1000 * valorKg).toFixed(2);
-
-document.getElementById("valorPix").innerText = "R$ " + valor;
-
-/* QR CODE PIX SIMPLES (simulado) */
-let pixString = "Pagamento Rochas Açaí R$"+valor+" Código:"+codigoAtual;
-
-document.getElementById("qrCode").src =
-"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="
-+ encodeURIComponent(pixString);
-
-trocar("tPix");
-}
-
-/* CARTÃO */
-function pagarCartao(){
-let valor = (pesoAtual/1000 * valorKg).toFixed(2);
-document.getElementById("valorCartao").innerText = "R$ " + valor;
-
-trocar("tCartao");
 iniciarTimer();
 }
 
-/* TIMER */
+/* TIMER 30s */
 function iniciarTimer(){
 let tempo = 30;
+
 document.getElementById("timer").innerText =
 "Tempo restante: "+tempo+"s";
 
 timerInterval = setInterval(()=>{
 tempo--;
+
 document.getElementById("timer").innerText =
 "Tempo restante: "+tempo+"s";
 
 if(tempo<=0){
 clearInterval(timerInterval);
-alert("Tempo expirado.");
+alert("Tempo expirado. Operação cancelada.");
 location.reload();
 }
 },1000);
@@ -249,24 +269,49 @@ let vendas = JSON.parse(localStorage.getItem("vendas")||"[]");
 vendas.push(venda);
 localStorage.setItem("vendas",JSON.stringify(vendas));
 
-alert("Pagamento registrado com sucesso!");
-location.reload();
+trocar("t4");
 }
 
-/* CONFIGURAÇÃO */
+/* Avaliação */
+function avaliar(emoji){
+
+let vendas = JSON.parse(localStorage.getItem("vendas"));
+vendas[vendas.length-1].avaliacao = emoji;
+localStorage.setItem("vendas",JSON.stringify(vendas));
+
+setTimeout(()=>{
+location.reload();
+},1500);
+}
+
+/* CONFIG */
 function abrirSenha(){
 let senha = prompt("Digite a senha:");
 if(senha==="1951"){
-let novoTitulo = prompt("Novo título:");
-if(novoTitulo){
-localStorage.setItem("titulo",novoTitulo);
-document.getElementById("tituloLoja").innerText = novoTitulo;
-}
+document.getElementById("modal").style.display="flex";
 }
 }
 
-document.getElementById("tituloLoja").innerText =
-localStorage.getItem("titulo") || "Rochas Açaí – Unidade Ilha 9";
+function salvarConfig(){
+let novoTitulo=document.getElementById("confTitulo").value;
+let novoKg=document.getElementById("confKg").value;
+
+if(novoTitulo){
+localStorage.setItem("titulo",novoTitulo);
+document.getElementById("tituloLoja").innerText=novoTitulo;
+}
+
+if(novoKg){
+localStorage.setItem("kg",novoKg);
+valorKg=novoKg;
+}
+
+alert("Salvo com sucesso!");
+}
+
+function fecharModal(){
+document.getElementById("modal").style.display="none";
+}
 
 </script>
 
