@@ -5,7 +5,7 @@
 
 body {
   margin: 0;
-  background: #f5f5f5;
+  background: linear-gradient(180deg, #f5f5f5, #eaeaea);
 }
 
 .container {
@@ -21,11 +21,13 @@ body {
   padding: 30px;
   width: 90%;
   max-width: 400px;
-  border-radius: 10px;
+  border-radius: 12px;
   text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
-.tela.ativa {
+/* GARANTE QUE NÃO FIQUE BRANCO */
+#telaTelefone {
   display: block;
 }
 
@@ -33,7 +35,7 @@ input {
   width: 100%;
   padding: 15px;
   font-size: 18px;
-  margin: 15px 0;
+  margin: 20px 0;
 }
 
 button {
@@ -42,13 +44,22 @@ button {
   font-size: 18px;
   margin-top: 10px;
   border: none;
-  border-radius: 5px;
-  background: #2ecc71;
+  border-radius: 6px;
+  background: #7b2cbf;
   color: #fff;
+}
+
+button:active {
+  opacity: 0.8;
+}
+
+.avaliacao {
+  display: flex;
+  justify-content: space-between;
 }
 
 .avaliacao button {
   width: 18%;
-  font-size: 28px;
+  font-size: 30px;
   background: none;
 }
