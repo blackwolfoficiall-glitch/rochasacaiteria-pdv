@@ -6,10 +6,14 @@
 <title>Rochas Açaí</title>
 
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
+*{
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+margin:0;
+padding:0;
+}
 
 body{
-margin:0;
 height:100vh;
 background:linear-gradient(135deg,#5b1fa6,#8a2be2);
 display:flex;
@@ -19,18 +23,20 @@ color:#fff;
 overflow:hidden;
 }
 
-/* ENGRENAGEM SOMENTE NA TELA INICIAL */
+/* ENGRENAGEM FIXA DEFINITIVA */
 .config-btn{
-position:absolute;
-top:15px;
-right:15px;
+position:fixed;
+top:20px;
+right:20px;
 background:none;
 border:none;
 font-size:26px;
 cursor:pointer;
+z-index:9999;
+display:none;
 }
 
-/* CARD */
+/* CARD PADRÃO */
 .card{
 position:relative;
 background:rgba(255,255,255,0.08);
@@ -38,14 +44,18 @@ backdrop-filter:blur(15px);
 padding:35px;
 border-radius:20px;
 width:90%;
-max-width:400px;
+max-width:420px;
 text-align:center;
 display:none;
 }
 
-.card.active{display:block}
+.card.active{
+display:block;
+}
 
-h1,h2{margin:10px 0}
+h1,h2{
+margin-bottom:15px;
+}
 
 input{
 width:100%;
@@ -95,7 +105,7 @@ font-size:30px;
 cursor:pointer;
 }
 
-/* MODAL */
+/* MODAL CONFIG */
 .modal{
 position:fixed;
 inset:0;
@@ -117,16 +127,18 @@ text-align:center;
 .modal-box input{
 background:#fff;
 color:#000;
+margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- ENGRENAGEM FORA DOS CARDS -->
+<button class="config-btn" id="engrenagem" onclick="abrirSenha()">⚙</button>
+
 <!-- TELA 1 -->
 <div class="card active" id="t1">
-<button class="config-btn" onclick="abrirSenha()">⚙</button>
-
 <h1 id="tituloLoja">Rochas Açaí – Unidade Ilha 9</h1>
 
 <input 
@@ -187,15 +199,25 @@ let valorKg = parseFloat(localStorage.getItem("kg")) || 59.90;
 let codigoAtual = "";
 let timerInterval;
 
-/* Carregar título */
+/* Carregar título salvo */
 document.getElementById("tituloLoja").innerText =
 localStorage.getItem("titulo") || "Rochas Açaí – Unidade Ilha 9";
 
-/* Trocar tela */
+/* Função trocar tela */
 function trocar(id){
 document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
 document.getElementById(id).classList.add("active");
+
+/* Mostrar engrenagem só na tela inicial */
+if(id === "t1"){
+document.getElementById("engrenagem").style.display = "block";
+}else{
+document.getElementById("engrenagem").style.display = "none";
 }
+}
+
+/* Inicializar sistema */
+trocar("t1");
 
 /* Telefone -> Peso */
 function irPeso(){
@@ -220,12 +242,10 @@ alert("Simule o peso primeiro");
 return;
 }
 
-let valor = (pesoAtual/1000 * parseFloat(valorKg)).toFixed(2);
-
+let valor = (pesoAtual/1000 * valorKg).toFixed(2);
 document.getElementById("valor").innerText = "R$ " + valor;
 
 codigoAtual = "RA" + Date.now();
-
 document.getElementById("codigoVenda").innerText =
 "Código: " + codigoAtual;
 
@@ -233,7 +253,7 @@ trocar("t3");
 iniciarTimer();
 }
 
-/* TIMER */
+/* TIMER 30s */
 function iniciarTimer(){
 let tempo = 30;
 document.getElementById("timer").innerText =
