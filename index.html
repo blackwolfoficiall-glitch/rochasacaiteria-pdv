@@ -6,10 +6,7 @@
 <title>Rochas Açaí - Autoatendimento</title>
 
 <style>
-* {
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
+* { box-sizing: border-box; font-family: Arial, sans-serif; }
 
 body {
   margin: 0;
@@ -24,11 +21,26 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
+  position: relative;
+}
+
+.config-btn {
+  position: absolute;
+  top: -60px;
+  right: 10px;
+  background: #fff;
+  color: #5a189a;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+  border: none;
+  cursor: pointer;
 }
 
 .tela {
   display: none;
-  background: #ffffff;
+  background: #fff;
   width: 90%;
   max-width: 420px;
   padding: 30px;
@@ -37,42 +49,29 @@ body {
   box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
 
-.tela.ativa {
-  display: block;
-}
+.tela.ativa { display: block; }
 
 .titulo-loja {
-  margin-top: 0;
-  margin-bottom: 25px;
-  color: #5a189a;
   font-size: 22px;
   font-weight: bold;
-}
-
-h1 {
-  margin-top: 0;
   color: #5a189a;
-}
-
-p {
-  color: #555;
-  font-size: 16px;
+  margin-bottom: 20px;
 }
 
 input {
   width: 100%;
-  padding: 16px;
+  padding: 15px;
   font-size: 18px;
-  margin: 20px 0;
+  margin: 15px 0;
   border-radius: 10px;
   border: 1px solid #ccc;
 }
 
 button {
   width: 100%;
-  padding: 16px;
+  padding: 15px;
   font-size: 18px;
-  margin-top: 12px;
+  margin-top: 10px;
   border: none;
   border-radius: 12px;
   background: linear-gradient(90deg, #7b2cbf, #9d4edd);
@@ -80,25 +79,36 @@ button {
   cursor: pointer;
 }
 
-button:active {
-  transform: scale(0.98);
-}
-
-h2 {
-  color: #222;
-  margin: 10px 0 20px;
-}
+h2 { margin: 10px 0 20px; }
 
 .avaliacao {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
 }
 
 .avaliacao button {
   width: 18%;
-  font-size: 30px;
+  font-size: 28px;
   background: none;
+}
+
+/* MODAL CONFIG */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 350px;
+  text-align: center;
 }
 </style>
 </head>
@@ -106,36 +116,33 @@ h2 {
 <body>
 
 <div class="container">
+  <button class="config-btn" onclick="abrirSenha()">⚙</button>
 
-  <!-- PASSO 1 -->
+  <!-- TELA 1 -->
   <div class="tela ativa" id="telaTelefone">
-    <div class="titulo-loja">Rochas Açaí – Unidade Ilha 9</div>
-
-    <p>Digite seu telefone</p>
-    <input type="tel" id="telefone" placeholder="DDD + número">
+    <div class="titulo-loja" id="tituloLoja">Rochas Açaí – Unidade Ilha 9</div>
+    <input type="tel" id="telefone" placeholder="Digite seu telefone">
     <button onclick="irParaPeso()">Continuar</button>
   </div>
 
-  <!-- PASSO 2 -->
+  <!-- TELA 2 -->
   <div class="tela" id="telaPeso">
-    <h1>Coloque o pote na balança</h1>
-    <p>Peso atual</p>
+    <h2>Peso atual</h2>
     <h2 id="peso">0 g</h2>
     <button onclick="simularPeso()">Simular peso</button>
     <button onclick="irParaPagamento()">Continuar</button>
   </div>
 
-  <!-- PASSO 3 -->
+  <!-- TELA 3 -->
   <div class="tela" id="telaPagamento">
-    <h1>Pague na maquininha agora</h1>
-    <p>Valor a pagar</p>
+    <h2>Pague na maquininha agora</h2>
     <h2 id="valor">R$ 0,00</h2>
     <button onclick="confirmarPagamento()">Pagamento confirmado</button>
   </div>
 
-  <!-- PASSO 4 -->
+  <!-- TELA 4 -->
   <div class="tela" id="telaAvaliacao">
-    <h1>Avalie o atendimento</h1>
+    <h2>Avalie o atendimento</h2>
     <div class="avaliacao">
       <button onclick="avaliar(1)">😡</button>
       <button onclick="avaliar(2)">😕</button>
@@ -143,56 +150,85 @@ h2 {
       <button onclick="avaliar(4)">🙂</button>
       <button onclick="avaliar(5)">😍</button>
     </div>
-    <p>Obrigado pela preferência ❤️</p>
   </div>
+</div>
 
+<!-- MODAIS -->
+<div class="modal" id="modalSenha">
+  <div class="modal-content">
+    <h3>Senha</h3>
+    <input type="password" id="senhaConfig" placeholder="Digite a senha">
+    <button onclick="validarSenha()">Entrar</button>
+  </div>
+</div>
+
+<div class="modal" id="modalConfig">
+  <div class="modal-content">
+    <h3>Configurações</h3>
+    <input type="number" id="novoValorKg" placeholder="Valor do KG (ex: 50)">
+    <input type="text" id="novoTitulo" placeholder="Título da loja">
+    <button onclick="salvarConfig()">Salvar</button>
+    <button onclick="baixarPDF()">Baixar relatório PDF</button>
+    <button onclick="fecharConfig()">Fechar</button>
+  </div>
 </div>
 
 <script>
 let pesoAtual = 0;
-const precoPorGrama = 0.05;
+let valorKg = 50;
+let vendas = [];
 
-function trocarTela(id) {
-  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+function trocarTela(id){
+  document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
   document.getElementById(id).classList.add('ativa');
 }
 
-function irParaPeso() {
-  if (document.getElementById('telefone').value.length < 8) {
-    alert('Digite um telefone válido');
-    return;
-  }
+function irParaPeso(){
+  if(telefone.value.length < 8) return alert("Telefone inválido");
   trocarTela('telaPeso');
 }
 
-function simularPeso() {
-  pesoAtual = Math.floor(Math.random() * 800) + 200;
-  document.getElementById('peso').innerText = pesoAtual + ' g';
+function simularPeso(){
+  pesoAtual = Math.floor(Math.random()*800)+200;
+  peso.innerText = pesoAtual + " g";
 }
 
-function irParaPagamento() {
-  if (pesoAtual === 0) {
-    alert('Coloque o pote na balança');
-    return;
-  }
-  const valor = (pesoAtual * precoPorGrama).toFixed(2);
-  document.getElementById('valor').innerText = 'R$ ' + valor.replace('.', ',');
+function irParaPagamento(){
+  if(pesoAtual===0) return alert("Peso inválido");
+  const valor = ((pesoAtual/1000)*valorKg).toFixed(2);
+  valorEl = document.getElementById("valor");
+  valorEl.innerText = "R$ " + valor.replace('.',',');
   trocarTela('telaPagamento');
 }
 
-function confirmarPagamento() {
+function confirmarPagamento(){
+  vendas.push({peso:pesoAtual, data:new Date()});
   trocarTela('telaAvaliacao');
-
-  setTimeout(() => {
-    pesoAtual = 0;
-    document.getElementById('peso').innerText = '0 g';
-    document.getElementById('telefone').value = '';
-    trocarTela('telaTelefone');
-  }, 3000);
+  setTimeout(()=>trocarTela('telaTelefone'),3000);
 }
 
-function avaliar(nota) {
-  console.log('Avaliação:', nota);
+function avaliar(n){ console.log("Avaliação:",n); }
+
+function abrirSenha(){ modalSenha.style.display='flex'; }
+function validarSenha(){
+  if(senhaConfig.value==="1951"){
+    modalSenha.style.display='none';
+    modalConfig.style.display='flex';
+  } else alert("Senha incorreta");
+}
+
+function salvarConfig(){
+  if(novoValorKg.value) valorKg = parseFloat(novoValorKg.value);
+  if(novoTitulo.value) tituloLoja.innerText = novoTitulo.value;
+  alert("Configurações salvas");
+}
+
+function baixarPDF(){
+  window.print();
+}
+
+function fecharConfig(){
+  modalConfig.style.display='none';
 }
 </script>
 
