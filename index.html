@@ -1,202 +1,68 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rochas Açaí</title>
-
-<style>
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-
-body{
-margin:0;
-min-height:100vh;
-background:linear-gradient(180deg,#5a189a,#7b2cbf);
-display:flex;
-justify-content:center;
-align-items:center;
-}
-
-.container{width:100%;display:flex;justify-content:center}
-
-.card{
-background:#6a1bb9;
-width:90%;
-max-width:420px;
-padding:30px;
-border-radius:22px;
-color:#fff;
-text-align:center;
-box-shadow:0 25px 50px rgba(0,0,0,.35);
-}
-
-h1{font-size:22px;margin-bottom:20px}
-
-input{
-width:100%;
-padding:15px;
-font-size:18px;
-border:none;
-border-radius:12px;
-margin:12px 0;
-}
-
-button{
-width:100%;
-padding:15px;
-font-size:18px;
-border:none;
-border-radius:14px;
-background:linear-gradient(90deg,#9d4edd,#c77dff);
-color:#fff;
-cursor:pointer;
-}
-
-.hidden{display:none}
-
-/* CONFIG */
-.config-btn{
-position:fixed;
-top:20px;
-right:20px;
-width:48px;
-height:48px;
-border-radius:50%;
-border:none;
-background:linear-gradient(135deg,#c77dff,#9d4edd);
-color:#fff;
-font-size:22px;
-box-shadow:0 10px 25px rgba(0,0,0,.4);
-}
-
-/* MODAL */
-.modal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.7);
-display:none;
-justify-content:center;
-align-items:center;
-}
-
-.modal-box{
-background:#fff;
-color:#333;
-width:90%;
-max-width:360px;
-padding:25px;
-border-radius:18px;
-text-align:center;
-}
-
-.modal-box input{border:1px solid #ccc}
-</style>
+  <meta charset="UTF-8">
+  <title>Rochas Açaí</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
+<!-- BOTÃO CONFIG -->
 <button class="config-btn" onclick="abrirSenha()">⚙️</button>
 
 <div class="container">
-<div class="card" id="telaTelefone">
-<h1 id="titulo">Rochas Açaí – Unidade Ilha 9</h1>
-<input id="telefone" placeholder="Digite seu telefone">
-<button onclick="irPeso()">Continuar</button>
+
+  <!-- TELA 1 -->
+  <section class="tela ativa" id="t1">
+    <h1 id="tituloLoja">Rochas Açaí – Unidade Ilha 9</h1>
+    <p class="sub">Digite seu telefone para começar</p>
+    <input id="telefone" placeholder="DDD + Número">
+    <button onclick="irPeso()">Continuar</button>
+  </section>
+
+  <!-- TELA 2 -->
+  <section class="tela" id="t2">
+    <h2>Peso atual</h2>
+    <div class="valor" id="peso">0 g</div>
+    <button onclick="simularPeso()">Simular peso</button>
+    <button onclick="irPagamento()">Continuar</button>
+  </section>
+
+  <!-- TELA 3 -->
+  <section class="tela" id="t3">
+    <h2>Valor a pagar</h2>
+    <div class="valor" id="valor">R$ 0,00</div>
+    <p class="sub">Pague na maquininha</p>
+    <button onclick="confirmarPagamento()">Pagamento confirmado</button>
+  </section>
+
+  <!-- TELA 4 -->
+  <section class="tela" id="t4">
+    <h2>Avalie o atendimento</h2>
+    <div class="avaliacao">
+      <button onclick="avaliar(5)">😍</button>
+      <button onclick="avaliar(4)">🙂</button>
+      <button onclick="avaliar(3)">😐</button>
+      <button onclick="avaliar(2)">😕</button>
+      <button onclick="avaliar(1)">😡</button>
+    </div>
+  </section>
+
 </div>
 
-<div class="card hidden" id="telaPeso">
-<h1>Peso atual</h1>
-<h1 id="peso">0 g</h1>
-<button onclick="simularPeso()">Simular peso</button>
-<button onclick="irPagamento()">Continuar</button>
+<!-- MODAL CONFIG -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h3>Configurações</h3>
+    <input id="confTitulo" placeholder="Título da loja">
+    <input id="confKg" placeholder="Valor do KG">
+    <button onclick="salvarConfig()">Salvar</button>
+    <button onclick="gerarPDF()">Gerar PDF</button>
+    <button onclick="fecharModal()">Fechar</button>
+  </div>
 </div>
 
-<div class="card hidden" id="telaPagamento">
-<h1>Pague na maquininha</h1>
-<h1 id="valor">R$ 0,00</h1>
-<button onclick="confirmar()">Pagamento confirmado</button>
-</div>
-
-<div class="card hidden" id="telaAvaliacao">
-<h1>Avalie o atendimento</h1>
-<button onclick="finalizar()">😍 Ótimo</button>
-</div>
-</div>
-
-<!-- MODAIS -->
-<div class="modal" id="senhaModal">
-<div class="modal-box">
-<h3>Senha</h3>
-<input id="senha">
-<button onclick="validarSenha()">Entrar</button>
-</div>
-</div>
-
-<div class="modal" id="configModal">
-<div class="modal-box">
-<h3>Configurações</h3>
-<input id="novoTitulo" placeholder="Título da loja">
-<input id="novoKg" type="number" placeholder="Valor do KG">
-<button onclick="salvarConfig()">Salvar</button>
-<button onclick="gerarPDF()">Gerar PDF</button>
-<button onclick="fecharConfig()">Fechar</button>
-</div>
-</div>
-
-<script>
-let pesoAtual=0
-let valorKg=localStorage.getItem("kg")||50
-let vendas=JSON.parse(localStorage.getItem("vendas")||"[]")
-
-titulo.innerText=localStorage.getItem("titulo")||titulo.innerText
-
-function trocar(a,b){document.getElementById(a).classList.add("hidden");document.getElementById(b).classList.remove("hidden")}
-
-function irPeso(){if(telefone.value.length<8)return alert("Telefone inválido");trocar("telaTelefone","telaPeso")}
-function simularPeso(){pesoAtual=Math.floor(Math.random()*800)+200;peso.innerText=pesoAtual+" g"}
-function irPagamento(){
-let v=(pesoAtual/1000*valorKg).toFixed(2)
-valor.innerText="R$ "+v.replace(".",",")
-trocar("telaPeso","telaPagamento")
-}
-function confirmar(){
-let venda={
-codigo:"RA"+Date.now(),
-telefone:telefone.value,
-peso:pesoAtual,
-valor:(pesoAtual/1000*valorKg).toFixed(2),
-data:new Date().toLocaleString()
-}
-vendas.push(venda)
-localStorage.setItem("vendas",JSON.stringify(vendas))
-trocar("telaPagamento","telaAvaliacao")
-setTimeout(()=>location.reload(),3000)
-}
-
-/* CONFIG */
-function abrirSenha(){senhaModal.style.display="flex"}
-function validarSenha(){if(senha.value==="1951"){senhaModal.style.display="none";configModal.style.display="flex"}else alert("Senha errada")}
-function fecharConfig(){configModal.style.display="none"}
-
-function salvarConfig(){
-if(novoTitulo.value){localStorage.setItem("titulo",novoTitulo.value);titulo.innerText=novoTitulo.value}
-if(novoKg.value){localStorage.setItem("kg",novoKg.value);valorKg=novoKg.value}
-alert("Configurações salvas")
-}
-
-/* PDF */
-function gerarPDF(){
-let texto="RELATÓRIO ROCHAS AÇAÍ\n\n"
-vendas.forEach(v=>{
-texto+=`Código: ${v.codigo}\nTelefone: ${v.telefone}\nPeso: ${v.peso}g\nValor: R$ ${v.valor}\nData: ${v.data}\n\n`
-})
-let blob=new Blob([texto],{type:"text/plain"})
-let a=document.createElement("a")
-a.href=URL.createObjectURL(blob)
-a.download="relatorio_rochas_acai.txt"
-a.click()
-}
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
