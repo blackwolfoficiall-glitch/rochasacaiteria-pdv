@@ -1,68 +1,80 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Rochas Açaí</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rochas Açaí</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+
+body{
+margin:0;
+height:100vh;
+background:linear-gradient(135deg,#5b1fa6,#8a2be2);
+display:flex;
+justify-content:center;
+align-items:center;
+color:#fff;
+}
+
+.card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+padding:30px;
+border-radius:20px;
+width:90%;
+max-width:380px;
+text-align:center;
+}
+
+h1{margin-bottom:20px}
+
+input{
+width:100%;
+padding:15px;
+border:none;
+border-radius:12px;
+margin:15px 0;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:15px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,#9b5cff,#c77dff);
+color:#fff;
+font-size:18px;
+margin-top:12px;
+}
+
+.hidden{display:none}
+
+.config-btn{
+position:fixed;
+top:20px;
+right:20px;
+width:50px;
+height:50px;
+border-radius:50%;
+border:none;
+background:linear-gradient(135deg,#9b5cff,#c77dff);
+font-size:20px;
+}
+</style>
 </head>
+
 <body>
 
-<!-- BOTÃO CONFIG -->
-<button class="config-btn" onclick="abrirSenha()">⚙️</button>
+<button class="config-btn">⚙️</button>
 
-<div class="container">
-
-  <!-- TELA 1 -->
-  <section class="tela ativa" id="t1">
-    <h1 id="tituloLoja">Rochas Açaí – Unidade Ilha 9</h1>
-    <p class="sub">Digite seu telefone para começar</p>
-    <input id="telefone" placeholder="DDD + Número">
-    <button onclick="irPeso()">Continuar</button>
-  </section>
-
-  <!-- TELA 2 -->
-  <section class="tela" id="t2">
-    <h2>Peso atual</h2>
-    <div class="valor" id="peso">0 g</div>
-    <button onclick="simularPeso()">Simular peso</button>
-    <button onclick="irPagamento()">Continuar</button>
-  </section>
-
-  <!-- TELA 3 -->
-  <section class="tela" id="t3">
-    <h2>Valor a pagar</h2>
-    <div class="valor" id="valor">R$ 0,00</div>
-    <p class="sub">Pague na maquininha</p>
-    <button onclick="confirmarPagamento()">Pagamento confirmado</button>
-  </section>
-
-  <!-- TELA 4 -->
-  <section class="tela" id="t4">
-    <h2>Avalie o atendimento</h2>
-    <div class="avaliacao">
-      <button onclick="avaliar(5)">😍</button>
-      <button onclick="avaliar(4)">🙂</button>
-      <button onclick="avaliar(3)">😐</button>
-      <button onclick="avaliar(2)">😕</button>
-      <button onclick="avaliar(1)">😡</button>
-    </div>
-  </section>
-
+<div class="card">
+<h1>Rochas Açaí – Unidade Ilha 9</h1>
+<input placeholder="Digite seu telefone">
+<button>Continuar</button>
 </div>
 
-<!-- MODAL CONFIG -->
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <h3>Configurações</h3>
-    <input id="confTitulo" placeholder="Título da loja">
-    <input id="confKg" placeholder="Valor do KG">
-    <button onclick="salvarConfig()">Salvar</button>
-    <button onclick="gerarPDF()">Gerar PDF</button>
-    <button onclick="fecharModal()">Fechar</button>
-  </div>
-</div>
-
-<script src="app.js"></script>
 </body>
 </html>
